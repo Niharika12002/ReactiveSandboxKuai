@@ -769,127 +769,45 @@
 
 
 
-    /* ══════════════════════════════════════════
-       INTRO  (Splash → 3 Onboarding → App)
-    ══════════════════════════════════════════ */
 
-    #intro {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      z-index: 99999;
+
+    /* ── SPLASH ── */
+    #splash {
+      position: fixed; top:0; left:0;
+      width:100vw; height:100vh; z-index:99999;
       background: var(--bg-panel);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity .7s ease;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      transition: opacity .8s ease;
     }
-    #intro.fade-out {
-      opacity: 0;
-      pointer-events: none;
+    #splash.out { opacity:0; pointer-events:none; }
+    .sp-logo {
+      font-size:88px; font-weight:900; color:var(--gold);
+      letter-spacing:-.05em; line-height:1;
+      opacity:0; transform:translateY(14px);
+      animation: spUp .7s ease .2s forwards;
     }
-
-    /* One panel = one full-screen slide */
-    .i-panel {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: var(--bg-panel);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 48px 32px;
-      text-align: center;
-      opacity: 0;
-      transition: opacity .55s ease;
-      pointer-events: none;
+    .sp-tag {
+      font-size:11px; font-weight:600; color:var(--text-4);
+      letter-spacing:.2em; text-transform:uppercase; margin-top:16px;
+      opacity:0; animation: spUp .6s ease .55s forwards;
     }
-    .i-panel.on {
-      opacity: 1;
-      pointer-events: all;
+    .sp-line {
+      width:48px; height:1.5px; background:var(--gold);
+      border-radius:2px; margin-top:38px;
+      transform:scaleX(0); transform-origin:left;
+      animation: spLine 1.2s ease .8s forwards;
     }
-
-    /* Splash elements */
-    .i-logo {
-      font-size: 88px; font-weight: 900;
-      color: var(--gold); letter-spacing: -.05em; line-height: 1;
-    }
-    .i-tagline {
-      font-size: 12px; font-weight: 600;
-      color: var(--text-4); letter-spacing: .2em;
-      text-transform: uppercase; margin-top: 18px;
-    }
-    .i-bar {
-      width: 48px; height: 2px;
-      background: var(--gold); border-radius: 2px;
-      margin-top: 40px;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 1.6s ease;
-    }
-    .i-bar.grow { transform: scaleX(1); }
-
-    /* Onboarding elements */
-    .i-step {
-      font-size: 10px; font-weight: 800;
-      color: var(--gold); letter-spacing: .2em;
-      text-transform: uppercase; margin-bottom: 20px;
-    }
-    .i-icon { font-size: 60px; line-height: 1; margin-bottom: 28px; }
-    .i-title {
-      font-size: 32px; font-weight: 900;
-      color: var(--text-1); letter-spacing: -.03em;
-      line-height: 1.1; margin-bottom: 16px;
-      max-width: 360px;
-    }
-    .i-body {
-      font-size: 15px; color: var(--text-3);
-      font-weight: 400; line-height: 1.7;
-      max-width: 320px; margin-bottom: 48px;
-    }
-    .i-nav {
-      display: flex; align-items: center; gap: 20px;
-    }
-    .i-dots { display: flex; gap: 7px; align-items: center; }
-    .i-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--border);
-      transition: all .3s ease;
-    }
-    .i-dot.on { background: var(--gold); width: 22px; border-radius: 4px; }
-    .i-next {
-      padding: 13px 30px;
-      background: var(--gold); color: #fff;
-      border: none; border-radius: 100px;
-      font-size: 14px; font-weight: 800;
-      letter-spacing: .03em; cursor: pointer;
-      box-shadow: 0 4px 20px rgba(181,144,74,.35);
-      transition: background .15s, transform .15s;
-      font-family: var(--font);
-    }
-    .i-next:hover { background: var(--gold-dk); transform: translateY(-1px); }
-    .i-next:active { transform: scale(.97); }
-    .i-skip {
-      font-size: 12px; font-weight: 600;
-      color: var(--text-4); background: none;
-      border: none; cursor: pointer; padding: 13px 4px;
-      font-family: var(--font);
-      transition: color .15s;
-    }
-    .i-skip:hover { color: var(--text-2); }
-
-    /* Micro-interactions */
+    @keyframes spUp { to { opacity:1; transform:translateY(0); } }
+    @keyframes spLine { to { transform:scaleX(1); } }
+    /* Micro */
     @keyframes heartPop {
-      0%,100% { transform: scale(1); }
-      40%     { transform: scale(1.45); }
-      70%     { transform: scale(.9); }
+      0%,100%{transform:scale(1)} 40%{transform:scale(1.45)} 70%{transform:scale(.9)}
     }
     @keyframes pillPop {
-      0%,100% { transform: scale(1); }
-      45%     { transform: scale(1.18); }
+      0%,100%{transform:scale(1)} 45%{transform:scale(1.18)}
     }
-    .pri-btn:active { transform: scale(.93); }
+    .pri-btn:active { transform:scale(.93); }
 
     /* ─── UTILITIES ──────────────────────────────────────────────────────── */
     .icon { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -897,144 +815,9 @@
   </style>
 </head>
 <body>
-    <div class="ob-slide" id="ob1">
-      <div class="ob-icon">✦</div>
-      <div class="ob-step">Step 2 of 3</div>
-      <div class="ob-title">Save to your collection</div>
-      <div class="ob-body">Hit + to save items to your personal wishlist. Add notes, set priorities, and mark favorites.</div>
-    </div>
-
-    <div class="ob-slide" id="ob2">
-      <div class="ob-icon">💰</div>
-      <div class="ob-step">Step 3 of 3</div>
-      <div class="ob-title">Compare prices. Buy smart.</div>
-      <div class="ob-body">Kuai shows you the same item across multiple retailers so you always get the best price.</div>
-    </div>
-
-  </div>
-  </div>
-  <div class="ob-dots">
-    <div class="ob-dot active" id="dot0"></div>
-    <div class="ob-dot" id="dot1"></div>
-    <div class="ob-dot" id="dot2"></div>
-  </div>
-  <div class="ob-actions">
-    <button class="ob-btn-skip" id="obSkip">Skip</button>
-    <button class="ob-btn-next" id="obNext">Next →</button>
-  </div>
-  </div>
-</div>
-
-
-  <!-- Screen 1: Onboarding step 1 -->
-  <div class="intro-screen" id="isOb1">
-    <div class="ob-step-label">01 — Search</div>
-    <div class="ob-icon">🔍</div>
-    <div class="ob-title">Find anything you want</div>
-    <div class="ob-body">Search by product, brand, or category. Kuai surfaces it instantly from a curated catalog.</div>
-    <div class="ob-nav">
-      <button class="ob-skip" id="obSkip1">Skip</button>
-      <div class="ob-dots">
-        <div class="ob-dot active"></div>
-        <div class="ob-dot"></div>
-        <div class="ob-dot"></div>
-      </div>
-      <button class="ob-btn" id="obNext1">Next</button>
-    </div>
-  </div>
-
-  <!-- Screen 2: Onboarding step 2 -->
-  <div class="intro-screen" id="isOb2">
-    <div class="ob-step-label">02 — Save</div>
-    <div class="ob-icon">✦</div>
-    <div class="ob-title">Build your wishlist</div>
-    <div class="ob-body">Hit + to save items. Add notes, set priorities, mark favorites — everything in one calm space.</div>
-    <div class="ob-nav">
-      <button class="ob-skip" id="obSkip2">Skip</button>
-      <div class="ob-dots">
-        <div class="ob-dot"></div>
-        <div class="ob-dot active"></div>
-        <div class="ob-dot"></div>
-      </div>
-      <button class="ob-btn" id="obNext2">Next</button>
-    </div>
-  </div>
-
-  <!-- Screen 3: Onboarding step 3 -->
-  <div class="intro-screen" id="isOb3">
-    <div class="ob-step-label">03 — Compare</div>
-    <div class="ob-icon">💰</div>
-    <div class="ob-title">Always buy at the best price</div>
-    <div class="ob-body">Kuai compares prices across retailers so you never overpay. Shop with confidence.</div>
-    <div class="ob-nav">
-      <div class="ob-dots">
-        <div class="ob-dot"></div>
-        <div class="ob-dot"></div>
-        <div class="ob-dot active"></div>
-      </div>
-      <button class="ob-btn" id="obGetStarted">Get Started →</button>
-    </div>
-  </div>
-
-</div>
-
-
-<!-- ══ INTRO ══ -->
-<div id="intro">
-
-  <!-- Splash -->
-  <div class="i-panel on" id="ip0">
-    <div class="i-logo">kuai</div>
-    <div class="i-tagline">Save it. Compare it. Buy it right.</div>
-    <div class="i-bar" id="iBar"></div>
-  </div>
-
-  <!-- Step 1 -->
-  <div class="i-panel" id="ip1">
-    <div class="i-step">01 — Search</div>
-    <div class="i-icon">🔍</div>
-    <div class="i-title">Find anything you want</div>
-    <div class="i-body">Search by product, brand, or category. Kuai surfaces it instantly from a curated catalog.</div>
-    <div class="i-nav">
-      <button class="i-skip" onclick="introSkip()">Skip</button>
-      <div class="i-dots">
-        <div class="i-dot on"></div><div class="i-dot"></div><div class="i-dot"></div>
-      </div>
-      <button class="i-next" onclick="introNext(1)">Next</button>
-    </div>
-  </div>
-
-  <!-- Step 2 -->
-  <div class="i-panel" id="ip2">
-    <div class="i-step">02 — Save</div>
-    <div class="i-icon">✦</div>
-    <div class="i-title">Build your wishlist</div>
-    <div class="i-body">Hit + to save items. Add notes, set priorities, mark favorites — everything in one calm space.</div>
-    <div class="i-nav">
-      <button class="i-skip" onclick="introSkip()">Skip</button>
-      <div class="i-dots">
-        <div class="i-dot"></div><div class="i-dot on"></div><div class="i-dot"></div>
-      </div>
-      <button class="i-next" onclick="introNext(2)">Next</button>
-    </div>
-  </div>
-
-  <!-- Step 3 -->
-  <div class="i-panel" id="ip3">
-    <div class="i-step">03 — Compare</div>
-    <div class="i-icon">💰</div>
-    <div class="i-title">Always buy at the best price</div>
-    <div class="i-body">Kuai compares prices across retailers so you never overpay. Shop with confidence.</div>
-    <div class="i-nav">
-      <div class="i-dots">
-        <div class="i-dot"></div><div class="i-dot"></div><div class="i-dot on"></div>
-      </div>
-      <button class="i-next" onclick="introSkip()">Get Started →</button>
-    </div>
-  </div>
-
-</div>
-<!-- ══ END INTRO ══ -->
+    
+<!-- SPLASH -->
+<div id="splash"><div class="sp-logo">kuai</div><div class="sp-tag">Save it. Compare it. Buy it right.</div><div class="sp-line"></div></div>
 
 <div class="app">
 
@@ -1715,41 +1498,7 @@ window.addEventListener('resize', () => {
   if (!isTablet()) closeCtrl();
 });
 
-// ══ INTRO ══
-(function() {
-  var SEEN = 'kuai-intro-v3';
-  var el = document.getElementById('intro');
-
-  // Already seen — remove instantly, no flash
-  if (localStorage.getItem(SEEN)) {
-    el.style.display = 'none';
-    return;
-  }
-
-  // Grow the bar after a tick
-  setTimeout(function() {
-    document.getElementById('iBar').classList.add('grow');
-  }, 100);
-
-  // After 2.4s cross-fade splash → step 1
-  setTimeout(function() { introNext(0); }, 2400);
-
-  window.introNext = function(from) {
-    var fromEl = document.getElementById('ip' + from);
-    var toEl   = document.getElementById('ip' + (from + 1));
-    if (!toEl) return;
-    fromEl.classList.remove('on');
-    setTimeout(function() { toEl.classList.add('on'); }, 560);
-  };
-
-  window.introSkip = function() {
-    localStorage.setItem(SEEN, '1');
-    el.classList.add('fade-out');
-    setTimeout(function() { el.style.display = 'none'; }, 720);
-  };
-})();
-
-// ══ MICRO-INTERACTIONS ══
+// ── MICRO-INTERACTIONS ──
 document.getElementById('favBtn').addEventListener('click', function() {
   this.style.animation = 'none';
   void this.offsetWidth;
@@ -1823,6 +1572,65 @@ document.getElementById('notesSave').addEventListener('click', function() {
     animateDetailImg();
     setTimeout(animateCards, 16);
   };
+})();
+
+// ── SPLASH ──
+(function(){
+  var sp = document.getElementById('splash');
+  setTimeout(function(){
+    sp.classList.add('out');
+    setTimeout(function(){ sp.style.display='none'; }, 850);
+  }, 2600);
+})();
+
+// ── MICRO-INTERACTIONS ──
+document.getElementById('favBtn').addEventListener('click', function(){
+  this.style.animation='none'; void this.offsetWidth;
+  this.style.animation='heartPop .4s ease forwards';
+  var me=this; setTimeout(function(){ me.style.animation=''; },420);
+});
+var _pc=0;
+function checkPillPop(){
+  if(state.items.length>_pc){
+    var p=document.getElementById('topPill');
+    p.style.animation='none'; void p.offsetWidth;
+    p.style.animation='pillPop .35s ease forwards';
+    setTimeout(function(){ p.style.animation=''; },380);
+  }
+  _pc=state.items.length;
+}
+var _pid=null;
+function animateDetailImg(){
+  var item=selectedItem();
+  if(!item||item.id===_pid) return;
+  _pid=item.id;
+  var img=document.getElementById('detailImg');
+  img.style.transition='none'; img.style.opacity='0'; img.style.transform='scale(.97)';
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    img.style.transition='opacity .3s ease,transform .3s ease';
+    img.style.opacity='1'; img.style.transform='scale(1)';
+  });});
+}
+function animateCards(){
+  document.querySelectorAll('.item-card').forEach(function(c,i){
+    c.style.opacity='0'; c.style.transform='translateX(-8px)'; c.style.transition='none';
+    setTimeout(function(){
+      c.style.transition='opacity .2s ease,transform .2s ease';
+      c.style.opacity='1'; c.style.transform='translateX(0)';
+    }, i*38);
+  });
+}
+document.getElementById('notesSave').addEventListener('click',function(){
+  setTimeout(function(){
+    var b=document.querySelector('.notes-box'); if(!b) return;
+    b.style.transition='background .15s,border-color .15s';
+    b.style.background='var(--sage-lt)'; b.style.borderColor='var(--sage)';
+    setTimeout(function(){ b.style.background=''; b.style.borderColor=''; },600);
+  },60);
+},true);
+(function(){
+  var _b=render;
+  render=function(){ _b(); checkPillPop(); animateDetailImg(); setTimeout(animateCards,16); };
 })();
 
 </script>
