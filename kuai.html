@@ -768,137 +768,126 @@
 
 
 
-    /* ═══════════════════════════════════════════════════════════════
-       INTRO FLOW  —  Splash → Onboarding → App
-       One shared full-screen stage. Each screen fades in/out.
-    ═══════════════════════════════════════════════════════════════ */
 
-    /* Lock scroll while intro is running */
-    body.intro-active { overflow: hidden; }
+    /* ══════════════════════════════════════════
+       INTRO  (Splash → 3 Onboarding → App)
+    ══════════════════════════════════════════ */
 
-    /* ── SHARED INTRO STAGE ── */
-    .intro-stage {
-      position: fixed; inset: 0; z-index: 9000;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
+    #intro {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 99999;
       background: var(--bg-panel);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .7s ease;
     }
-
-    /* Each screen sits on the same stage, stacked */
-    .intro-screen {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 48px 32px;
+    #intro.fade-out {
       opacity: 0;
-      transition: opacity .55s cubic-bezier(.4,0,.2,1);
       pointer-events: none;
     }
-    .intro-screen.visible {
+
+    /* One panel = one full-screen slide */
+    .i-panel {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--bg-panel);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 32px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity .55s ease;
+      pointer-events: none;
+    }
+    .i-panel.on {
       opacity: 1;
       pointer-events: all;
     }
 
-    /* ── SPLASH SCREEN ── */
-    .splash-logo {
-      font-size: 80px; font-weight: 900; color: var(--gold);
-      letter-spacing: -.05em; line-height: 1;
-      transform: translateY(10px);
-      animation: introUp .7s cubic-bezier(0,0,.2,1) .15s forwards;
-      opacity: 0;
+    /* Splash elements */
+    .i-logo {
+      font-size: 88px; font-weight: 900;
+      color: var(--gold); letter-spacing: -.05em; line-height: 1;
     }
-    .splash-sub {
-      font-size: 12px; font-weight: 600; color: var(--text-4);
-      letter-spacing: .2em; text-transform: uppercase;
-      margin-top: 16px;
-      transform: translateY(8px);
-      animation: introUp .6s cubic-bezier(0,0,.2,1) .45s forwards;
-      opacity: 0;
+    .i-tagline {
+      font-size: 12px; font-weight: 600;
+      color: var(--text-4); letter-spacing: .2em;
+      text-transform: uppercase; margin-top: 18px;
     }
-    .splash-line {
-      width: 0; height: 1.5px; background: var(--gold);
-      margin-top: 36px; border-radius: 2px;
-      animation: lineGrow 1s cubic-bezier(.4,0,.2,1) .7s forwards;
+    .i-bar {
+      width: 48px; height: 2px;
+      background: var(--gold); border-radius: 2px;
+      margin-top: 40px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 1.6s ease;
     }
-    @keyframes introUp {
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes lineGrow {
-      to { width: 56px; }
-    }
+    .i-bar.grow { transform: scaleX(1); }
 
-    /* ── ONBOARDING SCREENS ── */
-    .ob-step-label {
-      font-size: 10px; font-weight: 800; color: var(--gold);
-      letter-spacing: .2em; text-transform: uppercase;
-      margin-bottom: 20px;
+    /* Onboarding elements */
+    .i-step {
+      font-size: 10px; font-weight: 800;
+      color: var(--gold); letter-spacing: .2em;
+      text-transform: uppercase; margin-bottom: 20px;
     }
-    .ob-icon {
-      font-size: 56px; line-height: 1; margin-bottom: 28px;
+    .i-icon { font-size: 60px; line-height: 1; margin-bottom: 28px; }
+    .i-title {
+      font-size: 32px; font-weight: 900;
+      color: var(--text-1); letter-spacing: -.03em;
+      line-height: 1.1; margin-bottom: 16px;
+      max-width: 360px;
     }
-    .ob-title {
-      font-size: 30px; font-weight: 900; color: var(--text-1);
-      letter-spacing: -.03em; line-height: 1.1;
-      margin-bottom: 16px; text-align: center; max-width: 340px;
+    .i-body {
+      font-size: 15px; color: var(--text-3);
+      font-weight: 400; line-height: 1.7;
+      max-width: 320px; margin-bottom: 48px;
     }
-    .ob-body {
-      font-size: 15px; color: var(--text-3); font-weight: 400;
-      line-height: 1.7; text-align: center; max-width: 320px;
-      margin-bottom: 48px;
-    }
-    .ob-nav {
+    .i-nav {
       display: flex; align-items: center; gap: 20px;
     }
-    .ob-dots {
-      display: flex; gap: 7px; align-items: center;
-    }
-    .ob-dot {
+    .i-dots { display: flex; gap: 7px; align-items: center; }
+    .i-dot {
       width: 7px; height: 7px; border-radius: 50%;
       background: var(--border);
-      transition: all .3s cubic-bezier(.4,0,.2,1);
+      transition: all .3s ease;
     }
-    .ob-dot.active {
-      background: var(--gold); width: 22px; border-radius: 4px;
-    }
-    .ob-btn {
-      padding: 13px 28px; background: var(--gold); color: #fff;
+    .i-dot.on { background: var(--gold); width: 22px; border-radius: 4px; }
+    .i-next {
+      padding: 13px 30px;
+      background: var(--gold); color: #fff;
       border: none; border-radius: 100px;
-      font-size: 14px; font-weight: 800; letter-spacing: .03em;
-      cursor: pointer;
-      transition: background .15s, transform .15s, box-shadow .2s;
+      font-size: 14px; font-weight: 800;
+      letter-spacing: .03em; cursor: pointer;
       box-shadow: 0 4px 20px rgba(181,144,74,.35);
+      transition: background .15s, transform .15s;
+      font-family: var(--font);
     }
-    .ob-btn:hover {
-      background: var(--gold-dk); transform: translateY(-1px);
-      box-shadow: 0 8px 28px rgba(181,144,74,.4);
-    }
-    .ob-btn:active { transform: translateY(0); }
-    .ob-skip {
-      font-size: 12px; font-weight: 600; color: var(--text-4);
-      background: none; border: none; cursor: pointer;
-      padding: 13px 4px;
+    .i-next:hover { background: var(--gold-dk); transform: translateY(-1px); }
+    .i-next:active { transform: scale(.97); }
+    .i-skip {
+      font-size: 12px; font-weight: 600;
+      color: var(--text-4); background: none;
+      border: none; cursor: pointer; padding: 13px 4px;
+      font-family: var(--font);
       transition: color .15s;
     }
-    .ob-skip:hover { color: var(--text-2); }
+    .i-skip:hover { color: var(--text-2); }
 
-    /* ── MICRO-INTERACTIONS ── */
-    @keyframes cardSlideIn {
-      from { opacity: 0; transform: translateX(-10px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
+    /* Micro-interactions */
     @keyframes heartPop {
-      0%   { transform: scale(1); }
-      35%  { transform: scale(1.45); }
-      65%  { transform: scale(.9); }
-      100% { transform: scale(1); }
+      0%,100% { transform: scale(1); }
+      40%     { transform: scale(1.45); }
+      70%     { transform: scale(.9); }
     }
     @keyframes pillPop {
       0%,100% { transform: scale(1); }
       45%     { transform: scale(1.18); }
-    }
-    @keyframes notesFlash {
-      0%,100% { border-color: var(--border); }
-      50%     { border-color: var(--sage); background: var(--sage-lt); }
     }
     .pri-btn:active { transform: scale(.93); }
 
@@ -936,18 +925,6 @@
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════════════
-     INTRO FLOW: Splash → Onboarding 1,2,3 → App
-══════════════════════════════════════════════ -->
-<div class="intro-stage" id="introStage">
-
-  <!-- Screen 0: Splash -->
-  <div class="intro-screen visible" id="isSplash">
-    <div class="splash-logo">kuai</div>
-    <div class="splash-sub">Save it. Compare it. Buy it right.</div>
-    <div class="splash-line"></div>
-  </div>
 
   <!-- Screen 1: Onboarding step 1 -->
   <div class="intro-screen" id="isOb1">
@@ -1000,6 +977,64 @@
   </div>
 
 </div>
+
+
+<!-- ══ INTRO ══ -->
+<div id="intro">
+
+  <!-- Splash -->
+  <div class="i-panel on" id="ip0">
+    <div class="i-logo">kuai</div>
+    <div class="i-tagline">Save it. Compare it. Buy it right.</div>
+    <div class="i-bar" id="iBar"></div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="i-panel" id="ip1">
+    <div class="i-step">01 — Search</div>
+    <div class="i-icon">🔍</div>
+    <div class="i-title">Find anything you want</div>
+    <div class="i-body">Search by product, brand, or category. Kuai surfaces it instantly from a curated catalog.</div>
+    <div class="i-nav">
+      <button class="i-skip" onclick="introSkip()">Skip</button>
+      <div class="i-dots">
+        <div class="i-dot on"></div><div class="i-dot"></div><div class="i-dot"></div>
+      </div>
+      <button class="i-next" onclick="introNext(1)">Next</button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="i-panel" id="ip2">
+    <div class="i-step">02 — Save</div>
+    <div class="i-icon">✦</div>
+    <div class="i-title">Build your wishlist</div>
+    <div class="i-body">Hit + to save items. Add notes, set priorities, mark favorites — everything in one calm space.</div>
+    <div class="i-nav">
+      <button class="i-skip" onclick="introSkip()">Skip</button>
+      <div class="i-dots">
+        <div class="i-dot"></div><div class="i-dot on"></div><div class="i-dot"></div>
+      </div>
+      <button class="i-next" onclick="introNext(2)">Next</button>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="i-panel" id="ip3">
+    <div class="i-step">03 — Compare</div>
+    <div class="i-icon">💰</div>
+    <div class="i-title">Always buy at the best price</div>
+    <div class="i-body">Kuai compares prices across retailers so you never overpay. Shop with confidence.</div>
+    <div class="i-nav">
+      <div class="i-dots">
+        <div class="i-dot"></div><div class="i-dot"></div><div class="i-dot on"></div>
+      </div>
+      <button class="i-next" onclick="introSkip()">Get Started →</button>
+    </div>
+  </div>
+
+</div>
+<!-- ══ END INTRO ══ -->
 
 <div class="app">
 
@@ -1680,131 +1715,108 @@ window.addEventListener('resize', () => {
   if (!isTablet()) closeCtrl();
 });
 
-// ══════════════════════════════════════════════════════════════
-// INTRO FLOW
-// ══════════════════════════════════════════════════════════════
+// ══ INTRO ══
+(function() {
+  var SEEN = 'kuai-intro-v3';
+  var el = document.getElementById('intro');
 
-const SEEN_KEY = 'kuai-seen-v2';
-const introStage = document.getElementById('introStage');
+  // Already seen — remove instantly, no flash
+  if (localStorage.getItem(SEEN)) {
+    el.style.display = 'none';
+    return;
+  }
 
-// Crossfade between two intro screens
-function crossfade(fromId, toId, then) {
-  const from = document.getElementById(fromId);
-  const to   = document.getElementById(toId);
-  // Fade out current
-  from.classList.remove('visible');
-  // After fade-out completes, fade in next
-  setTimeout(() => {
-    if (to) {
-      to.classList.add('visible');
-    }
-    if (then) setTimeout(then, 80);
-  }, 580);
-}
+  // Grow the bar after a tick
+  setTimeout(function() {
+    document.getElementById('iBar').classList.add('grow');
+  }, 100);
 
-// Dismiss the entire intro stage and reveal the app
-function launchApp() {
-  introStage.style.transition = 'opacity .6s cubic-bezier(.4,0,.2,1)';
-  introStage.style.opacity = '0';
-  document.body.classList.remove('intro-active');
-  localStorage.setItem(SEEN_KEY, '1');
-  setTimeout(() => {
-    introStage.style.display = 'none';
-  }, 650);
-}
+  // After 2.4s cross-fade splash → step 1
+  setTimeout(function() { introNext(0); }, 2400);
 
-function skipAll() { launchApp(); }
+  window.introNext = function(from) {
+    var fromEl = document.getElementById('ip' + from);
+    var toEl   = document.getElementById('ip' + (from + 1));
+    if (!toEl) return;
+    fromEl.classList.remove('on');
+    setTimeout(function() { toEl.classList.add('on'); }, 560);
+  };
 
-// Start the flow
-document.body.classList.add('intro-active');
+  window.introSkip = function() {
+    localStorage.setItem(SEEN, '1');
+    el.classList.add('fade-out');
+    setTimeout(function() { el.style.display = 'none'; }, 720);
+  };
+})();
 
-if (localStorage.getItem(SEEN_KEY)) {
-  // Returning user — skip everything instantly
-  introStage.style.display = 'none';
-  document.body.classList.remove('intro-active');
-} else {
-  // New user — run full flow
-  // Splash shows for 2.2s then crossfades to onboarding step 1
-  setTimeout(() => {
-    crossfade('isSplash', 'isOb1');
-  }, 2200);
-
-  document.getElementById('obNext1').addEventListener('click', () => crossfade('isOb1', 'isOb2'));
-  document.getElementById('obNext2').addEventListener('click', () => crossfade('isOb2', 'isOb3'));
-  document.getElementById('obGetStarted').addEventListener('click', launchApp);
-  document.getElementById('obSkip1').addEventListener('click', skipAll);
-  document.getElementById('obSkip2').addEventListener('click', skipAll);
-}
-
-// ══════════════════════════════════════════════════════════════
-// MICRO-INTERACTIONS
-// ══════════════════════════════════════════════════════════════
-
-// Favorite heart pop
+// ══ MICRO-INTERACTIONS ══
 document.getElementById('favBtn').addEventListener('click', function() {
   this.style.animation = 'none';
   void this.offsetWidth;
-  this.style.animation = 'heartPop .4s cubic-bezier(0,0,.2,1) forwards';
-  setTimeout(() => this.style.animation = '', 420);
+  this.style.animation = 'heartPop .4s ease forwards';
+  var me = this;
+  setTimeout(function() { me.style.animation = ''; }, 420);
 });
 
-// Topbar pill pop on new item saved
-let _prevCount = 0;
+var _prevCount = 0;
 function checkPillPop() {
   if (state.items.length > _prevCount) {
-    const pill = document.getElementById('topPill');
+    var pill = document.getElementById('topPill');
     pill.style.animation = 'none';
     void pill.offsetWidth;
-    pill.style.animation = 'pillPop .35s cubic-bezier(0,0,.2,1) forwards';
-    setTimeout(() => pill.style.animation = '', 380);
+    pill.style.animation = 'pillPop .35s ease forwards';
+    setTimeout(function() { pill.style.animation = ''; }, 380);
   }
   _prevCount = state.items.length;
 }
 
-// Detail image cross-fade on item switch
-let _prevItemId = null;
+var _prevItemId = null;
 function animateDetailImg() {
-  const item = selectedItem();
+  var item = selectedItem();
   if (!item || item.id === _prevItemId) return;
   _prevItemId = item.id;
-  const img = document.getElementById('detailImg');
+  var img = document.getElementById('detailImg');
   img.style.transition = 'none';
   img.style.opacity = '0';
   img.style.transform = 'scale(.97)';
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    img.style.transition = 'opacity .32s ease, transform .32s ease';
-    img.style.opacity = '1';
-    img.style.transform = 'scale(1)';
-  }));
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      img.style.transition = 'opacity .3s ease, transform .3s ease';
+      img.style.opacity = '1';
+      img.style.transform = 'scale(1)';
+    });
+  });
 }
 
-// Item cards stagger in
 function animateCards() {
-  document.querySelectorAll('.item-card').forEach((card, i) => {
+  document.querySelectorAll('.item-card').forEach(function(card, i) {
     card.style.opacity = '0';
     card.style.transform = 'translateX(-8px)';
     card.style.transition = 'none';
-    setTimeout(() => {
-      card.style.transition = 'opacity .22s ease, transform .22s ease';
+    setTimeout(function() {
+      card.style.transition = 'opacity .2s ease, transform .2s ease';
       card.style.opacity = '1';
       card.style.transform = 'translateX(0)';
     }, i * 38);
   });
 }
 
-// Notes box flash on save
-document.getElementById('notesSave').addEventListener('click', () => {
-  setTimeout(() => {
-    const box = document.querySelector('.notes-box');
+document.getElementById('notesSave').addEventListener('click', function() {
+  setTimeout(function() {
+    var box = document.querySelector('.notes-box');
     if (!box) return;
-    box.style.animation = 'notesFlash .55s ease forwards';
-    setTimeout(() => box.style.animation = '', 600);
+    box.style.transition = 'background .15s, border-color .15s';
+    box.style.background = 'var(--sage-lt)';
+    box.style.borderColor = 'var(--sage)';
+    setTimeout(function() {
+      box.style.background = '';
+      box.style.borderColor = '';
+    }, 600);
   }, 60);
 }, true);
 
-// Wrap render with micro-interactions
 (function() {
-  const _base = render;
+  var _base = render;
   render = function() {
     _base();
     checkPillPop();
