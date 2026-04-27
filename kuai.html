@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kuai — Your Shopping Companion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --bg:         #F7F4EF;
+      --bg-panel:   #FDFCFA;
+      --bg-inset:   #EDE9E1;
+      --bg-hover:   #E8E3D9;
+      --border:     #DDD7CE;
+      --border-lt:  #EDE9E1;
+      --text-1:     #2E2520;
+      --text-2:     #6B5B4E;
+      --text-3:     #A89880;
+      --gold:       #B89B6A;
+      --gold-lt:    #EDE3D0;
+      --gold-dk:    #8C7448;
+      --sage:       #8A9E8C;
+      --sage-lt:    #E8EEE8;
+      --rust:       #C4745A;
+      --rust-lt:    #F0DDD6;
+      --espresso:   #3A2E26;
+      --shadow-sm:  0 1px 4px rgba(58,46,38,.07);
+      --shadow-md:  0 4px 20px rgba(58,46,38,.09);
+      --r-sm: 6px; --r-md: 10px; --r-lg: 16px;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'DM Sans', system-ui, sans-serif;
+      --ease:  cubic-bezier(.4,0,.2,1);
+    }
+    [data-theme="dark"] {
+      --bg:         #1A1612;
+      --bg-panel:   #211D18;
+      --bg-inset:   #2A2420;
+      --bg-hover:   #332D27;
+      --border:     #3D3530;
+      --border-lt:  #2E2822;
+      --text-1:     #EDE9E1;
+      --text-2:     #B5A898;
+      --text-3:     #7A6E62;
+      --gold:       #C9A96E;
+      --gold-lt:    #2E2618;
+      --gold-dk:    #E8C88A;
+      --sage:       #7A9B7C;
+      --sage-lt:    #1A2A1C;
+      --rust:       #D4856A;
+      --rust-lt:    #2E1A14;
+      --espresso:   #F0EBE3;
+      --shadow-sm:  0 1px 4px rgba(0,0,0,.25);
+      --shadow-md:  0 4px 20px rgba(0,0,0,.35);
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { background: var(--bg); color: var(--text-1); font-family: var(--sans); font-size: 14px; transition: background .25s var(--ease), color .25s var(--ease); }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    button { font-family: var(--sans); cursor: pointer; }
+    input, select, textarea { font-family: var(--sans); }
+
+    /* ── LAYOUT ── */
+    .app { height: 100vh; display: flex; flex-direction: column; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      height: 54px; flex-shrink: 0;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      transition: background .25s var(--ease), border-color .25s var(--ease);
+    }
+    .topbar-left { display: flex; align-items: baseline; gap: 14px; }
+    .logo { font-family: var(--serif); font-style: italic; font-size: 24px; color: var(--gold); letter-spacing: .03em; line-height: 1; }
+    .tagline { font-size: 11px; color: var(--text-3); letter-spacing: .12em; text-transform: uppercase; font-weight: 300; }
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .api-status { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-3); }
+    .api-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sage); }
+    .api-dot.offline { background: var(--rust); }
+    .api-dot.online { animation: pulse 2.4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+    .topbar-count { font-size: 11px; color: var(--text-3); }
+
+    /* THEME TOGGLE */
+    .theme-toggle {
+      width: 36px; height: 20px; border-radius: 10px;
+      background: var(--bg-inset); border: 1px solid var(--border);
+      position: relative; cursor: pointer; transition: background .2s;
+      flex-shrink: 0;
+    }
+    .theme-toggle-knob {
+      position: absolute; top: 2px; left: 2px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--gold); transition: transform .2s var(--ease);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8px;
+    }
+    [data-theme="dark"] .theme-toggle-knob { transform: translateX(16px); }
+
+    /* ── OFFLINE BANNER ── */
+    .offline-banner {
+      background: var(--rust-lt); border-bottom: 1px solid var(--rust);
+      padding: 7px 24px; font-size: 12px; color: var(--rust);
+      text-align: center; display: none; flex-shrink: 0;
+    }
+    .offline-banner.show { display: block; }
+    .offline-banner code { font-size: 11px; background: rgba(0,0,0,.06); padding: 1px 5px; border-radius: 3px; }
+
+    /* ── PANELS ── */
+    .panels {
+      flex: 1; display: grid;
+      grid-template-columns: 25% 1fr 20%;
+      overflow: hidden;
+      transition: background .25s var(--ease);
+    }
+
+    /* ── SHARED PANEL ── */
+    .panel { display: flex; flex-direction: column; overflow: hidden; }
+    .panel + .panel { border-left: 1px solid var(--border); }
+    .panel-header {
+      padding: 16px 16px 14px; flex-shrink: 0;
+      border-bottom: 1px solid var(--border-lt);
+    }
+    .panel-title {
+      font-family: var(--serif); font-size: 13px; font-weight: 500;
+      color: var(--text-1); letter-spacing: .04em; margin-bottom: 10px;
+    }
+
+    /* ── SEARCH INPUT ── */
+    .search-wrap { position: relative; }
+    .search-icon { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--text-3); pointer-events: none; }
+    .search-spin { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin .6s linear infinite; display: none; }
+    .search-spin.show { display: block; }
+    @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+    .search-input {
+      width: 100%; height: 34px; padding: 0 32px 0 30px;
+      background: var(--bg-inset); border: 1px solid var(--border);
+      border-radius: var(--r-sm); font-size: 12px; color: var(--text-1);
+      outline: none; transition: border-color .15s, background .15s;
+    }
+    .search-input::placeholder { color: var(--text-3); }
+    .search-input:focus { border-color: var(--gold); background: var(--bg-panel); }
+
+    /* ── CATALOG RESULTS ── */
+    .catalog-results {
+      border-bottom: 1px solid var(--border-lt);
+      padding: 8px 12px; flex-shrink: 0;
+      max-height: 190px; overflow-y: auto;
+      background: var(--bg-panel);
+    }
+    .catalog-results-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-3); font-weight: 500; margin-bottom: 5px; }
+    .catalog-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 7px; border-radius: var(--r-sm); cursor: pointer;
+      transition: background .15s;
+    }
+    .catalog-item:hover { background: var(--bg-inset); }
+    .catalog-thumb { width: 32px; height: 32px; border-radius: 4px; object-fit: cover; flex-shrink: 0; background: var(--bg-inset); }
+    .catalog-info { flex: 1; min-width: 0; }
+    .catalog-name { font-size: 11px; font-weight: 500; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .catalog-meta { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+    .catalog-add {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--gold); border: none; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; line-height: 1; flex-shrink: 0;
+      transition: background .15s, transform .15s;
+    }
+    .catalog-add:hover { background: var(--gold-dk); transform: scale(1.08); }
+    .catalog-add:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+    /* ── SAVED LIST ── */
+    .saved-list { flex: 1; overflow-y: auto; padding: 6px; background: var(--bg-panel); }
+    .list-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-3); font-weight: 500; padding: 8px 8px 4px; }
+    .item-card {
+      display: flex; align-items: center; gap: 9px;
+      padding: 9px 8px; border-radius: var(--r-sm); cursor: pointer;
+      transition: background .15s; border: 1px solid transparent;
+    }
+    .item-card:hover { background: var(--bg-hover); }
+    .item-card.selected { background: var(--gold-lt); border-color: var(--gold); }
+    .item-card.is-purchased { opacity: .5; }
+    .item-thumb { width: 40px; height: 40px; border-radius: var(--r-sm); object-fit: cover; flex-shrink: 0; background: var(--bg-inset); }
+    .item-info { flex: 1; min-width: 0; }
+    .item-name { font-size: 12px; font-weight: 500; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-brand { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+    .item-price { font-size: 11px; font-weight: 500; color: var(--text-2); margin-top: 2px; }
+    .item-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
+    .fav-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+    .badge { font-size: 9px; padding: 2px 5px; border-radius: 3px; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
+    .badge-high   { background: var(--rust-lt);  color: var(--rust); }
+    .badge-medium { background: var(--gold-lt);  color: var(--gold-dk); }
+    .badge-low    { background: var(--sage-lt);  color: var(--sage); }
+    .badge-done   { background: var(--sage-lt);  color: var(--sage); }
+
+    /* SKELETON */
+    .skeleton { background: linear-gradient(90deg, var(--bg-inset) 25%, var(--bg-hover) 50%, var(--bg-inset) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: var(--r-sm); }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    .skel-card { display: flex; gap: 9px; padding: 9px 8px; }
+    .skel-thumb { width: 40px; height: 40px; flex-shrink: 0; }
+    .skel-info { flex: 1; display: flex; flex-direction: column; gap: 5px; justify-content: center; }
+    .skel-line { height: 9px; }
+
+    /* EMPTY */
+    .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 24px; text-align: center; }
+    .empty-mark { font-size: 24px; opacity: .3; }
+    .empty-title { font-family: var(--serif); font-style: italic; font-size: 14px; color: var(--text-2); }
+    .empty-sub { font-size: 11px; color: var(--text-3); line-height: 1.5; }
+
+    /* ── DETAIL PANEL ── */
+    .detail-panel { background: var(--bg); }
+    .detail-scroll { flex: 1; overflow-y: auto; padding: 28px 32px 48px; }
+    .detail-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 40px; text-align: center; }
+    .detail-empty-mark { font-size: 36px; opacity: .2; }
+    .detail-empty-title { font-family: var(--serif); font-style: italic; font-size: 22px; color: var(--text-2); }
+    .detail-empty-sub { font-size: 13px; color: var(--text-3); max-width: 280px; line-height: 1.6; }
+
+    /* Detail content */
+    .detail-img-wrap { width: 100%; aspect-ratio: 16/9; border-radius: var(--r-lg); overflow: hidden; margin-bottom: 22px; background: var(--bg-inset); box-shadow: var(--shadow-md); }
+    .detail-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity .3s; }
+    .cat-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .cat-pill {
+      font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--sage); background: var(--sage-lt); border: 1px solid transparent;
+      border-radius: 4px; padding: 3px 9px; outline: none; cursor: pointer;
+      -webkit-appearance: none; transition: border-color .15s;
+    }
+    .cat-pill:focus { border-color: var(--sage); }
+    .detail-name { font-family: var(--serif); font-size: 28px; font-weight: 500; line-height: 1.2; margin-bottom: 4px; }
+    .detail-brand { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 26px; }
+    .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--text-3); font-weight: 500; margin-bottom: 10px; }
+
+    /* Price comparison */
+    .price-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+    .price-card {
+      flex: 1; min-width: 88px; background: var(--bg-panel);
+      border: 1px solid var(--border); border-radius: var(--r-md);
+      padding: 12px 14px; transition: border-color .15s, transform .15s, box-shadow .15s;
+    }
+    .price-card:hover { border-color: var(--gold); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+    .price-card.best { border-color: var(--sage); background: var(--sage-lt); }
+    .price-retailer { font-size: 11px; color: var(--text-3); margin-bottom: 4px; }
+    .price-amount { font-family: var(--serif); font-size: 21px; font-weight: 500; color: var(--text-1); }
+    .price-card.best .price-amount { color: var(--sage); }
+    .price-best-tag { font-size: 9px; color: var(--sage); text-transform: uppercase; letter-spacing: .08em; margin-top: 3px; font-weight: 500; }
+    .price-savings { font-size: 12px; color: var(--sage); font-weight: 500; margin-bottom: 24px; }
+
+    /* Priority */
+    .priority-row { display: flex; gap: 7px; margin-bottom: 22px; }
+    .pri-btn {
+      padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border);
+      background: transparent; color: var(--text-3); font-size: 11px; font-weight: 500;
+      text-transform: capitalize; transition: all .15s;
+    }
+    .pri-btn:hover { border-color: var(--text-3); color: var(--text-2); }
+    .pri-btn.active-low    { background: var(--sage-lt);  border-color: var(--sage); color: var(--sage); }
+    .pri-btn.active-medium { background: var(--gold-lt);  border-color: var(--gold); color: var(--gold-dk); }
+    .pri-btn.active-high   { background: var(--rust-lt);  border-color: var(--rust); color: var(--rust); }
+
+    /* Toggles */
+    .action-row { display: flex; gap: 10px; margin-bottom: 26px; }
+    .action-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 8px 16px; border-radius: var(--r-sm);
+      border: 1px solid var(--border); background: var(--bg-panel);
+      font-size: 12px; color: var(--text-2);
+      transition: all .15s;
+    }
+    .action-btn:hover { border-color: var(--text-3); background: var(--bg-inset); }
+    .action-btn.active-fav { background: var(--gold-lt); border-color: var(--gold); color: var(--gold-dk); }
+    .action-btn.active-purchased { background: var(--sage-lt); border-color: var(--sage); color: var(--sage); }
+    .action-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    /* Notes */
+    .notes-box { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 16px; }
+    .notes-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .pencil-btn { background: none; border: none; color: var(--text-3); padding: 2px; border-radius: 4px; display: flex; transition: color .15s; }
+    .pencil-btn:hover { color: var(--gold); }
+    .notes-text { font-size: 13px; color: var(--text-2); line-height: 1.7; font-style: italic; min-height: 36px; }
+    .notes-placeholder { color: var(--text-3); }
+    .notes-textarea {
+      width: 100%; min-height: 80px; font-size: 13px; color: var(--text-1);
+      background: var(--bg-inset); border: 1px solid var(--border);
+      border-radius: var(--r-sm); padding: 10px 12px; resize: none; outline: none;
+      line-height: 1.6; transition: border-color .15s;
+    }
+    .notes-textarea:focus { border-color: var(--gold); }
+    .notes-save {
+      margin-top: 8px; padding: 6px 16px;
+      background: var(--text-1); color: var(--bg);
+      border: none; border-radius: var(--r-sm);
+      font-size: 11px; font-weight: 500; letter-spacing: .06em;
+      transition: opacity .15s;
+    }
+    .notes-save:hover { opacity: .8; }
+    .notes-save:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ── CONTROLLER ── */
+    .ctrl-panel { background: var(--bg-panel); overflow-y: auto; }
+    .ctrl-header { padding: 16px 16px 14px; border-bottom: 1px solid var(--border-lt); }
+    .ctrl-title { font-family: var(--serif); font-size: 13px; font-weight: 500; letter-spacing: .04em; }
+    .ctrl-sec { padding: 14px 16px; border-bottom: 1px solid var(--border-lt); }
+    .ctrl-sec:last-child { border-bottom: none; }
+    .ctrl-sec-title { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--text-3); font-weight: 500; margin-bottom: 10px; }
+    .ctrl-select {
+      width: 100%; height: 32px; padding: 0 8px;
+      background: var(--bg-inset); border: 1px solid var(--border);
+      border-radius: var(--r-sm); font-size: 12px; color: var(--text-1);
+      outline: none; -webkit-appearance: none; margin-bottom: 8px;
+      transition: border-color .15s;
+    }
+    .ctrl-select:last-child { margin-bottom: 0; }
+    .ctrl-select:focus { border-color: var(--gold); }
+    .ctrl-toggle { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; cursor: pointer; }
+    .ctrl-toggle-label { font-size: 12px; color: var(--text-2); user-select: none; }
+    .sw { width: 32px; height: 18px; border-radius: 9px; background: var(--border); position: relative; transition: background .2s; flex-shrink: 0; }
+    .sw.on { background: var(--sage); }
+    .sw::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: transform .2s var(--ease); box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+    .sw.on::after { transform: translateX(14px); }
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .stat { background: var(--bg-inset); border-radius: var(--r-sm); padding: 10px; }
+    .stat-n { font-family: var(--serif); font-size: 21px; color: var(--text-1); line-height: 1; }
+    .stat-l { font-size: 10px; color: var(--text-3); margin-top: 3px; text-transform: uppercase; letter-spacing: .08em; }
+    .remove-btn {
+      width: 100%; padding: 9px 0;
+      background: transparent; border: 1px solid var(--border);
+      border-radius: var(--r-sm); font-size: 12px; color: var(--rust);
+      transition: all .15s;
+    }
+    .remove-btn:hover { background: var(--rust-lt); border-color: var(--rust); }
+    .remove-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .sel-item-name { font-size: 11px; color: var(--text-3); margin-bottom: 10px; line-height: 1.4; font-style: italic; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: var(--text-1); color: var(--bg);
+      padding: 9px 20px; border-radius: 24px;
+      font-size: 12px; letter-spacing: .04em;
+      z-index: 9999; pointer-events: none;
+      opacity: 0; transition: opacity .25s, transform .25s var(--ease);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { background: var(--rust); color: #fff; }
+
+    /* ── SVG ICONS (inline) ── */
+    .icon { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="logo">kuai</span>
+      <span class="tagline">Shopping Companion</span>
+    </div>
+    <div class="topbar-right">
+      <div class="api-status">
+        <div class="api-dot" id="apiDot"></div>
+        <span id="apiLabel">connecting…</span>
+      </div>
+      <span class="topbar-count" id="topCount">— saved</span>
+      <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode" aria-label="Toggle theme">
+        <div class="theme-toggle-knob" id="themeKnob">☀</div>
+      </button>
+    </div>
+  </header>
+
+  <!-- OFFLINE BANNER -->
+  <div class="offline-banner" id="offlineBanner">
+    Cannot reach the Kuai API — run <code>node server.js</code> to start it
+  </div>
+
+  <!-- PANELS -->
+  <div class="panels">
+
+    <!-- ── BROWSER ── -->
+    <aside class="panel" style="background: var(--bg-panel);">
+      <div class="panel-header">
+        <div class="panel-title">My Collection</div>
+        <div class="search-wrap">
+          <span class="icon search-icon">
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="9" r="6"/><path d="M15 15l3 3"/></svg>
+          </span>
+          <input class="search-input" id="searchInput" type="text" placeholder="Search or add items…" autocomplete="off" />
+          <div class="search-spin" id="searchSpin"></div>
+        </div>
+      </div>
+
+      <!-- Catalog results -->
+      <div class="catalog-results" id="catalogResults" style="display:none;"></div>
+
+      <!-- Saved list -->
+      <div class="saved-list" id="savedList"></div>
+    </aside>
+
+    <!-- ── DETAIL ── -->
+    <main class="panel detail-panel">
+      <div class="detail-empty" id="detailEmpty">
+        <div class="detail-empty-mark">✦</div>
+        <div class="detail-empty-title">Select an item</div>
+        <div class="detail-empty-sub">Choose something from your collection to view details, compare prices, and add notes.</div>
+      </div>
+      <div class="detail-scroll" id="detailScroll" style="display:none;">
+        <div class="detail-img-wrap">
+          <img class="detail-img" id="detailImg" src="" alt="" />
+        </div>
+        <div class="cat-row">
+          <select class="cat-pill" id="detailCat"></select>
+        </div>
+        <h1 class="detail-name" id="detailName"></h1>
+        <p class="detail-brand" id="detailBrand"></p>
+
+        <div class="section-label">Price Comparison</div>
+        <div class="price-row" id="priceRow"></div>
+        <p class="price-savings" id="priceSavings"></p>
+
+        <div class="section-label" style="margin-top:4px;">Priority</div>
+        <div class="priority-row" id="priorityRow">
+          <button class="pri-btn" data-p="low">Low</button>
+          <button class="pri-btn" data-p="medium">Medium</button>
+          <button class="pri-btn" data-p="high">High</button>
+        </div>
+
+        <div class="action-row">
+          <button class="action-btn" id="favBtn">
+            <svg class="icon" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg>
+            <span id="favLabel">Favorite</span>
+          </button>
+          <button class="action-btn" id="purchasedBtn">
+            <svg class="icon" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l5 5 8-8"/></svg>
+            <span id="purchasedLabel">Mark Purchased</span>
+          </button>
+        </div>
+
+        <div class="notes-box">
+          <div class="notes-head">
+            <div class="section-label" style="margin-bottom:0;">Notes</div>
+            <button class="pencil-btn" id="notesPencil" title="Edit notes">
+              <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2.5l3 3L6 17H3v-3L14.5 2.5z"/></svg>
+            </button>
+          </div>
+          <div class="notes-text" id="notesText"></div>
+          <textarea class="notes-textarea" id="notesTextarea" placeholder="Add a personal note…" style="display:none;"></textarea>
+          <button class="notes-save" id="notesSave" style="display:none;">Save Notes</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- ── CONTROLLER ── -->
+    <aside class="panel ctrl-panel">
+      <div class="ctrl-header">
+        <div class="ctrl-title">Controls</div>
+      </div>
+
+      <!-- Stats -->
+      <div class="ctrl-sec">
+        <div class="ctrl-sec-title">Overview</div>
+        <div class="stat-grid">
+          <div class="stat"><div class="stat-n" id="statTotal">—</div><div class="stat-l">Saved</div></div>
+          <div class="stat"><div class="stat-n" id="statFav">—</div><div class="stat-l">Favorites</div></div>
+          <div class="stat"><div class="stat-n" id="statPri">—</div><div class="stat-l">Priority</div></div>
+          <div class="stat"><div class="stat-n" id="statBought">—</div><div class="stat-l">Purchased</div></div>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div class="ctrl-sec">
+        <div class="ctrl-sec-title">Filter</div>
+        <select class="ctrl-select" id="ctrlCategory">
+          <option value="All">All categories</option>
+          <option>Tech</option><option>Beauty</option><option>Clothing</option>
+          <option>Home</option><option>Toys</option><option>Books</option>
+          <option>Food</option><option>Other</option>
+        </select>
+        <div class="ctrl-toggle" id="ctrlFavToggle">
+          <span class="ctrl-toggle-label">Favorites only</span>
+          <div class="sw" id="swFav"></div>
+        </div>
+        <div class="ctrl-toggle" id="ctrlPurchasedToggle">
+          <span class="ctrl-toggle-label">Show purchased</span>
+          <div class="sw on" id="swPurchased"></div>
+        </div>
+      </div>
+
+      <!-- Sort -->
+      <div class="ctrl-sec">
+        <div class="ctrl-sec-title">Sort</div>
+        <select class="ctrl-select" id="ctrlSort">
+          <option value="dateAddedNewest">Newest first</option>
+          <option value="dateAddedOldest">Oldest first</option>
+          <option value="priceLow">Price: low → high</option>
+          <option value="priceHigh">Price: high → low</option>
+          <option value="nameAZ">Name: A → Z</option>
+          <option value="priority">Priority</option>
+        </select>
+      </div>
+
+      <!-- Selected item controls -->
+      <div class="ctrl-sec" id="ctrlItemSec" style="display:none;">
+        <div class="ctrl-sec-title">Selected Item</div>
+        <div class="sel-item-name" id="selItemName"></div>
+        <select class="ctrl-select" id="ctrlPriority">
+          <option value="low">Low priority</option>
+          <option value="medium">Medium priority</option>
+          <option value="high">High priority</option>
+        </select>
+        <select class="ctrl-select" id="ctrlItemCat">
+          <option>Tech</option><option>Beauty</option><option>Clothing</option>
+          <option>Home</option><option>Toys</option><option>Books</option>
+          <option>Food</option><option>Other</option>
+        </select>
+        <button class="remove-btn" id="removeBtn">Remove from list</button>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE = `${window.location.origin}/api`; // serve the HTML from the same local server as the API
+const CATS = ['Tech','Beauty','Clothing','Home','Toys','Books','Food','Other'];
+const PRIS = ['low','medium','high'];
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let state = {
+  items: [],
+  selectedId: null,
+  search: '',
+  filterCat: 'All',
+  favOnly: false,
+  showPurchased: true,
+  sortBy: 'dateAddedNewest',
+  notesEditing: false,
+  apiOnline: false,
+};
+let searchTimer = null;
+let catalogData = [];
+
+// ── API ────────────────────────────────────────────────────────────────────
+const api = {
+  get: async (path) => {
+    const r = await fetch(BASE + path);
+    if (!r.ok) throw new Error(r.status);
+    return r.json();
+  },
+  post: async (path, body) => {
+    const r = await fetch(BASE + path, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    if (!r.ok) { const d=await r.json(); throw Object.assign(new Error(r.status), d); }
+    return r.json();
+  },
+  patch: async (path, body) => {
+    const r = await fetch(BASE + path, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    if (!r.ok) throw new Error(r.status);
+    return r.json();
+  },
+  del: async (path) => {
+    const r = await fetch(BASE + path, { method:'DELETE' });
+    if (!r.ok) throw new Error(r.status);
+    return r.json();
+  },
+};
+
+// ── TOAST ──────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, isError=false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (isError ? ' error' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ── DERIVED ────────────────────────────────────────────────────────────────
+function visibleItems() {
+  let items = [...state.items];
+  if (state.filterCat !== 'All') items = items.filter(i => i.category === state.filterCat);
+  if (state.favOnly) items = items.filter(i => i.favorite);
+  if (!state.showPurchased) items = items.filter(i => !i.purchased);
+  if (state.search.trim() && catalogData.length === 0) {
+    const q = state.search.toLowerCase();
+    items = items.filter(i => i.name.toLowerCase().includes(q) || i.brand.toLowerCase().includes(q));
+  }
+  const po = { high:0, medium:1, low:2 };
+  if (state.sortBy === 'dateAddedNewest') items.sort((a,b) => new Date(b.dateAdded)-new Date(a.dateAdded));
+  else if (state.sortBy === 'dateAddedOldest') items.sort((a,b) => new Date(a.dateAdded)-new Date(b.dateAdded));
+  else if (state.sortBy === 'priceLow') items.sort((a,b) => a.price-b.price);
+  else if (state.sortBy === 'priceHigh') items.sort((a,b) => b.price-a.price);
+  else if (state.sortBy === 'nameAZ') items.sort((a,b) => a.name.localeCompare(b.name));
+  else if (state.sortBy === 'priority') items.sort((a,b) => po[a.priority]-po[b.priority]);
+  return items;
+}
+function selectedItem() { return state.items.find(i => i.id === state.selectedId) || null; }
+function lowestPrice(item) { return item ? Math.min(...item.priceComparison.map(p=>p.price)) : null; }
+
+// ── RENDER ─────────────────────────────────────────────────────────────────
+function render() {
+  renderBrowser();
+  renderDetail();
+  renderController();
+  renderStats();
+}
+
+function renderBrowser() {
+  const list = document.getElementById('savedList');
+  const items = visibleItems();
+
+  if (state.items.length === 0 && !state.apiOnline) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-mark">✦</div><div class="empty-title">API offline</div><div class="empty-sub">Start the server to load your collection.</div></div>`;
+    return;
+  }
+  if (items.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-mark">✦</div><div class="empty-title">Nothing here yet</div><div class="empty-sub">Search above to find and add items.</div></div>`;
+    return;
+  }
+
+  const sel = selectedItem();
+  list.innerHTML = `<div class="list-label">Saved · ${items.length}</div>` +
+    items.map(item => {
+      const lp = lowestPrice(item);
+      return `<div class="item-card ${sel?.id===item.id?'selected':''} ${item.purchased?'is-purchased':''}" data-id="${item.id}">
+        <img class="item-thumb" src="${item.image}" alt="${item.name}" loading="lazy" />
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-brand">${item.brand}</div>
+          <div class="item-price">$${lp}</div>
+        </div>
+        <div class="item-badges">
+          ${item.favorite ? '<div class="fav-dot"></div>' : ''}
+          <span class="badge badge-${item.priority}">${item.priority}</span>
+          ${item.purchased ? '<span class="badge badge-done">✓</span>' : ''}
+        </div>
+      </div>`;
+    }).join('');
+
+  list.querySelectorAll('.item-card').forEach(el => {
+    el.addEventListener('click', () => {
+      state.selectedId = el.dataset.id;
+      state.notesEditing = false;
+      render();
+    });
+  });
+}
+
+function renderCatalogResults() {
+  const el = document.getElementById('catalogResults');
+  if (catalogData.length === 0) { el.style.display='none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = `<div class="catalog-results-label">Add to list</div>` +
+    catalogData.map((c,i) => `
+      <div class="catalog-item">
+        <img class="catalog-thumb" src="${c.img_url}" alt="${c.title}" loading="lazy" />
+        <div class="catalog-info">
+          <div class="catalog-name">${c.title}</div>
+          <div class="catalog-meta">${c.brand_name} · ${c.raw_price}</div>
+        </div>
+        <button class="catalog-add" data-idx="${i}" title="Add to list">+</button>
+      </div>`).join('');
+  el.querySelectorAll('.catalog-add').forEach(btn => {
+    btn.addEventListener('click', () => addFromCatalog(catalogData[+btn.dataset.idx], btn));
+  });
+}
+
+function renderDetail() {
+  const item = selectedItem();
+  const empty = document.getElementById('detailEmpty');
+  const scroll = document.getElementById('detailScroll');
+
+  if (!item) { empty.style.display='flex'; scroll.style.display='none'; return; }
+  empty.style.display='none'; scroll.style.display='block';
+
+  document.getElementById('detailImg').src = item.image;
+  document.getElementById('detailImg').alt = item.name;
+  document.getElementById('detailName').textContent = item.name;
+  document.getElementById('detailBrand').textContent = item.brand;
+
+  // Category select
+  const catEl = document.getElementById('detailCat');
+  catEl.innerHTML = CATS.map(c=>`<option${c===item.category?' selected':''}>${c}</option>`).join('');
+
+  // Price comparison
+  const lp = lowestPrice(item);
+  const hp = Math.max(...item.priceComparison.map(p=>p.price));
+  document.getElementById('priceRow').innerHTML = item.priceComparison.map(p =>
+    `<div class="price-card ${p.price===lp?'best':''}">
+      <div class="price-retailer">${p.retailer}</div>
+      <div class="price-amount">$${p.price}</div>
+      ${p.price===lp?'<div class="price-best-tag">Best price</div>':''}
+    </div>`).join('');
+  const savingsEl = document.getElementById('priceSavings');
+  const diff = hp - lp;
+  savingsEl.textContent = diff > 0 ? `Save up to $${diff} by choosing the best price` : '';
+  savingsEl.style.marginBottom = diff > 0 ? '24px' : '24px';
+
+  // Priority
+  document.querySelectorAll('.pri-btn').forEach(btn => {
+    btn.className = `pri-btn${btn.dataset.p===item.priority?' active-'+item.priority:''}`;
+  });
+
+  // Favorite / purchased
+  const favBtn = document.getElementById('favBtn');
+  favBtn.className = `action-btn${item.favorite?' active-fav':''}`;
+  document.getElementById('favLabel').textContent = item.favorite ? 'Favorited' : 'Favorite';
+  const pb = document.getElementById('purchasedBtn');
+  pb.className = `action-btn${item.purchased?' active-purchased':''}`;
+  document.getElementById('purchasedLabel').textContent = item.purchased ? 'Purchased' : 'Mark Purchased';
+
+  // Notes
+  const notesText = document.getElementById('notesText');
+  const notesTA = document.getElementById('notesTextarea');
+  const notesSave = document.getElementById('notesSave');
+  if (state.notesEditing) {
+    notesText.style.display='none'; notesTA.style.display='block'; notesSave.style.display='inline-block';
+    if (!notesTA.dataset.loaded) { notesTA.value = item.notes || ''; notesTA.dataset.loaded='1'; }
+    setTimeout(() => notesTA.focus(), 10);
+  } else {
+    notesTA.dataset.loaded='';
+    notesText.style.display='block'; notesTA.style.display='none'; notesSave.style.display='none';
+    notesText.innerHTML = item.notes
+      ? item.notes
+      : '<span class="notes-placeholder">No notes yet — click the pencil to add one.</span>';
+  }
+}
+
+function renderController() {
+  const item = selectedItem();
+  const sec = document.getElementById('ctrlItemSec');
+  if (!item) { sec.style.display='none'; return; }
+  sec.style.display='block';
+  document.getElementById('selItemName').textContent = item.name;
+  document.getElementById('ctrlPriority').value = item.priority;
+  document.getElementById('ctrlItemCat').value = item.category;
+}
+
+function renderStats() {
+  const items = state.items;
+  document.getElementById('statTotal').textContent = items.length;
+  document.getElementById('statFav').textContent = items.filter(i=>i.favorite).length;
+  document.getElementById('statPri').textContent = items.filter(i=>i.priority==='high'&&!i.purchased).length;
+  document.getElementById('statBought').textContent = items.filter(i=>i.purchased).length;
+  document.getElementById('topCount').textContent = `${items.length} saved`;
+}
+
+function renderSkeletons() {
+  const list = document.getElementById('savedList');
+  list.innerHTML = [1,2,3,4,5].map(()=>`
+    <div class="skel-card">
+      <div class="skeleton skel-thumb"></div>
+      <div class="skel-info">
+        <div class="skeleton skel-line" style="width:80%"></div>
+        <div class="skeleton skel-line" style="width:50%"></div>
+        <div class="skeleton skel-line" style="width:35%"></div>
+      </div>
+    </div>`).join('');
+}
+
+// ── LOAD COLLECTION ────────────────────────────────────────────────────────
+async function loadCollection() {
+  renderSkeletons();
+  try {
+    state.items = await api.get('/saved-items');
+    state.selectedId = state.items[0]?.id || null;
+    setApiStatus(true);
+  } catch {
+    setApiStatus(false);
+  }
+  render();
+}
+
+// ── API STATUS ─────────────────────────────────────────────────────────────
+function setApiStatus(online) {
+  state.apiOnline = online;
+  const dot = document.getElementById('apiDot');
+  const label = document.getElementById('apiLabel');
+  const banner = document.getElementById('offlineBanner');
+  if (online) {
+    dot.className='api-dot online'; label.textContent='API connected'; banner.classList.remove('show');
+  } else {
+    dot.className='api-dot offline'; label.textContent='API offline'; banner.classList.add('show');
+  }
+}
+
+// ── SEARCH ─────────────────────────────────────────────────────────────────
+document.getElementById('searchInput').addEventListener('input', e => {
+  state.search = e.target.value;
+  clearTimeout(searchTimer);
+  if (!state.search.trim() || state.search.length < 2) {
+    catalogData = [];
+    renderCatalogResults();
+    document.getElementById('searchSpin').classList.remove('show');
+    renderBrowser();
+    return;
+  }
+  document.getElementById('searchSpin').classList.add('show');
+  searchTimer = setTimeout(async () => {
+    try {
+      catalogData = await api.get(`/search?q=${encodeURIComponent(state.search)}`);
+      setApiStatus(true);
+    } catch { catalogData = []; setApiStatus(false); }
+    document.getElementById('searchSpin').classList.remove('show');
+    renderCatalogResults();
+    renderBrowser();
+  }, 350);
+});
+
+// ── ADD FROM CATALOG ───────────────────────────────────────────────────────
+async function addFromCatalog(raw, btn) {
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    const item = await api.post('/saved-items', raw);
+    state.items.unshift(item);
+    state.selectedId = item.id;
+    state.search = '';
+    document.getElementById('searchInput').value = '';
+    catalogData = [];
+    document.getElementById('catalogResults').style.display='none';
+    toast(`"${item.name}" added`);
+    setApiStatus(true);
+  } catch (err) {
+    if (err.error === 'Already in collection') toast('Already in your collection', true);
+    else { toast("Couldn't add — is the server running?", true); setApiStatus(false); }
+    btn.disabled = false; btn.textContent = '+';
+  }
+  render();
+}
+
+// ── UPDATE ITEM ────────────────────────────────────────────────────────────
+async function updateItem(id, updates) {
+  // Optimistic
+  state.items = state.items.map(i => i.id===id ? {...i,...updates} : i);
+  render();
+  try {
+    const updated = await api.patch(`/saved-items/${id}`, updates);
+    state.items = state.items.map(i => i.id===id ? updated : i);
+    setApiStatus(true);
+  } catch {
+    await loadCollection();
+    toast('Update failed', true);
+  }
+}
+
+// ── REMOVE ITEM ────────────────────────────────────────────────────────────
+async function removeItem(id) {
+  const name = state.items.find(i=>i.id===id)?.name || 'Item';
+  state.items = state.items.filter(i=>i.id!==id);
+  if (state.selectedId===id) state.selectedId = state.items[0]?.id || null;
+  state.notesEditing = false;
+  render();
+  try {
+    await api.del(`/saved-items/${id}`);
+    toast(`"${name}" removed`);
+    setApiStatus(true);
+  } catch {
+    await loadCollection();
+    toast("Couldn't remove item", true);
+  }
+}
+
+// ── DETAIL INTERACTIONS ────────────────────────────────────────────────────
+document.getElementById('detailCat').addEventListener('change', e => {
+  const item = selectedItem(); if (!item) return;
+  updateItem(item.id, { category: e.target.value });
+});
+document.querySelectorAll('.pri-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = selectedItem(); if (!item) return;
+    updateItem(item.id, { priority: btn.dataset.p });
+  });
+});
+document.getElementById('favBtn').addEventListener('click', () => {
+  const item = selectedItem(); if (!item) return;
+  updateItem(item.id, { favorite: !item.favorite });
+});
+document.getElementById('purchasedBtn').addEventListener('click', () => {
+  const item = selectedItem(); if (!item) return;
+  updateItem(item.id, { purchased: !item.purchased });
+});
+document.getElementById('notesPencil').addEventListener('click', () => {
+  state.notesEditing = true;
+  document.getElementById('notesTextarea').dataset.loaded='';
+  renderDetail();
+});
+document.getElementById('notesSave').addEventListener('click', async () => {
+  const item = selectedItem(); if (!item) return;
+  const val = document.getElementById('notesTextarea').value;
+  state.notesEditing = false;
+  await updateItem(item.id, { notes: val });
+  toast('Notes saved');
+});
+
+// ── CONTROLLER INTERACTIONS ────────────────────────────────────────────────
+document.getElementById('ctrlCategory').addEventListener('change', e => {
+  state.filterCat = e.target.value; renderBrowser();
+});
+document.getElementById('ctrlSort').addEventListener('change', e => {
+  state.sortBy = e.target.value; renderBrowser();
+});
+document.getElementById('ctrlFavToggle').addEventListener('click', () => {
+  state.favOnly = !state.favOnly;
+  document.getElementById('swFav').classList.toggle('on', state.favOnly);
+  renderBrowser();
+});
+document.getElementById('ctrlPurchasedToggle').addEventListener('click', () => {
+  state.showPurchased = !state.showPurchased;
+  document.getElementById('swPurchased').classList.toggle('on', state.showPurchased);
+  renderBrowser();
+});
+document.getElementById('ctrlPriority').addEventListener('change', e => {
+  const item = selectedItem(); if (!item) return;
+  updateItem(item.id, { priority: e.target.value });
+});
+document.getElementById('ctrlItemCat').addEventListener('change', e => {
+  const item = selectedItem(); if (!item) return;
+  updateItem(item.id, { category: e.target.value });
+});
+document.getElementById('removeBtn').addEventListener('click', () => {
+  const item = selectedItem(); if (!item) return;
+  removeItem(item.id);
+});
+
+// ── THEME TOGGLE ───────────────────────────────────────────────────────────
+const html = document.documentElement;
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const isDark = html.dataset.theme === 'dark';
+  html.dataset.theme = isDark ? 'light' : 'dark';
+  document.getElementById('themeKnob').textContent = isDark ? '☀' : '☾';
+  localStorage.setItem('kuai-theme', html.dataset.theme);
+});
+// Restore saved theme
+const savedTheme = localStorage.getItem('kuai-theme');
+if (savedTheme) {
+  html.dataset.theme = savedTheme;
+  document.getElementById('themeKnob').textContent = savedTheme === 'dark' ? '☾' : '☀';
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+loadCollection();
+</script>
+</body>
+</html>
