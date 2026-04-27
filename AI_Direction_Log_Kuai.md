@@ -436,7 +436,138 @@ This made Kuai easier to defend as a system and easier to build consistently. It
 
 ---
 
-## Summary
+### Entry 22 — Typography Overhaul: Moving to a Shopping-Native Type System
+
+**Prompt direction given:**
+Remove the serif/sans pairing (Playfair Display + DM Sans) and replace with a typography system that better communicates a shopping context. Questioned whether a serif font was even needed for a functional tool.
+
+**AI's assessment:**
+Agreed that Playfair Display reads editorial/literary — not shopping. Recommended dropping the serif entirely and moving to full Nunito Sans at weight 800–900 for display and 600–700 for UI. Referenced Shopify, Depop, and ASOS as all-sans shopping UI precedents.
+
+**What changed:**
+Kuai moved to a single-family type system — Nunito Sans at multiple weights. Weight alone carries the entire typographic hierarchy. Product names at 900, section labels at 800, body at 400. The interface became more confident and less editorial.
+
+---
+
+### Entry 23 — UX Audit: Thinking Like a Kuai User
+
+**Prompt direction given:**
+Evaluate Kuai as a user would experience it, applying core UX principles — visibility of system status, recognition over recall, user control and freedom, error prevention.
+
+**What AI identified and fixed:**
+- Empty collection + no guidance = dead end for new users → added search hint chips (Sony, Apple, Beauty, Jacket, Home)
+- Detail View showed "Nothing selected yet" while collection was also empty → updated copy to "Your wishlist is empty" with onboarding tips
+- Controller showed filter/sort controls when collection was empty (noise with no signal) → controls now dim to 40% opacity with an explanatory message
+- Notes had no cancel button → added Cancel alongside Save so users have a clear exit
+- "Mark Purchased" gave no confirmation → toast now names the action explicitly ("Marked as purchased ✓") with reversibility implied
+
+**Why this matters:**
+This entry applied Nielsen's 10 Usability Heuristics and the C.R.A.P. design principles to the working interface. The changes were not cosmetic — they addressed real friction points discovered by walking through the product as a user.
+
+---
+
+### Entry 24 — Brand Reference Refinement: Elevating the Visual Direction
+
+**Prompt direction given:**
+Take inspiration from Apple, Glossier, Nike, Allbirds, Everlane, and McMaster-Carr without copying them. Use these references to elevate Kuai's existing visual direction — do not redesign from scratch.
+
+**What each reference contributed:**
+- **Apple** — spacious layout, premium product image framing, confident product naming
+- **Glossier** — warm approachable empty states, friendly conversational copy
+- **Nike** — priority buttons as full-width action tiles, stronger CTA hierarchy
+- **Everlane** — price section header reads "Price at each retailer" — honest and specific; savings callout names the retailer
+- **McMaster-Carr** — search clear button, catalog result count, labeled selects
+- **Allbirds** — topbar pill shifts gold when items are saved, rewarding the user
+
+**What changed:**
+Detail image moved to 4:3 ratio with category badge as an overlay on the image. Product name increased to 26px weight 900. Price comparison uses a savings banner naming the exact retailer. Every interaction moment was tightened.
+
+---
+
+### Entry 25 — Real Product Images: Replacing Unsplash Placeholders
+
+**Prompt direction given:**
+Replace all 20 Unsplash placeholder images with real high-resolution product photography for each catalog item.
+
+**Process:**
+First set of images (3–5KB thumbnails) produced blurry results in the Detail View. AI diagnosed the issue — images were too small for the 4:3 display container which renders at ~790×593px on a standard laptop. Second set of images (32–189KB) at proper resolution were uploaded and embedded via raw GitHub URLs.
+
+**What changed:**
+Every product in the Kuai catalog now shows its actual product photo. Sony WH-1000XM5, Le Labo Santal 33, Patagonia jacket, Dyson V15, Polaroid camera, and all 16 others show professional brand photography.
+
+**Technical decision:**
+Images are served via `raw.githubusercontent.com` URLs rather than base64-embedded data URIs — this keeps the HTML file at 74KB instead of 107KB and preserves full image quality.
+
+---
+
+### Entry 26 — Responsive Design: TV, Desktop, Tablet, Mobile
+
+**Prompt direction given:**
+Make Kuai fully responsive so it works on any device — specifically for a classroom TV presentation as well as phones and tablets.
+
+**What was built:**
+
+| Breakpoint | Behaviour |
+|---|---|
+| 1440px+ (TV/large) | All sizes scale up proportionally — larger fonts, bigger touch targets, more padding |
+| 1200–1439px (desktop) | Original three-panel layout unchanged |
+| 768–1199px (tablet) | Two panels visible; Controls panel slides in via floating action button |
+| Under 768px (mobile) | Single panel with bottom tab navigation — Collection · Detail · Controls |
+
+**Mobile-specific interactions:**
+- Tapping an item in the collection automatically switches to the Detail panel
+- Bottom nav uses SVG icons with active state in gold
+- Controls accessible via dedicated tab
+
+---
+
+### Entry 27 — GitHub Pages Deployment
+
+**Prompt direction given:**
+Deploy Kuai as a single live URL accessible from any device — no server, no backend, no localhost dependency.
+
+**What was decided:**
+Abandoned Railway (Express backend deployment) after persistent `502 Bad Gateway` errors caused by Railway's dynamic PORT requirements and the free plan expiring. The architecture was simplified back to a standalone `kuai.html` — no backend needed.
+
+**Deployment method:**
+GitHub Pages serving `kuai.html` directly from the main branch root.
+
+**Live URL:**
+`https://niharika12002.github.io/ReactiveSandboxKuai/kuai.html`
+
+**Why this was the right call:**
+The course requirement was always mock data + shared state — a backend was never required. Removing it eliminated all deployment complexity and made the URL permanent, free, and reliable.
+
+---
+
+### Entry 28 — Splash Screen and Micro-Interactions
+
+**Prompt direction given:**
+Add a splash screen to give Kuai a proper branded opening moment. Also add micro-interactions throughout the interface so users receive clear feedback for every action.
+
+**What was built:**
+
+**Splash screen:**
+- `kuai` wordmark slides up on load
+- Tagline fades in at 0.55s
+- Gold line grows from left to right
+- Holds for 2.6 seconds then fades out over 0.8s
+- `position:fixed` at `z-index:99999` — covers the entire viewport
+
+**Micro-interactions:**
+- Favorite button: heart bounce animation on toggle
+- Topbar pill: scales up when first item is saved
+- Detail image: fades and scales in when switching between items
+- Item cards: stagger-animate in from the left when list renders
+- Notes box: flashes sage green to confirm a save
+- Priority buttons: press-down effect on click
+
+**Record of Resistance:**
+An onboarding flow (3 slides between splash and app) was attempted multiple times but caused critical visual breakage — all screens rendered stacked in the DOM rather than as a proper overlay sequence. After three failed attempts, the onboarding was removed entirely. The splash-only flow was retained as it works correctly and gives Kuai a premium opening without adding technical risk.
+
+---
+
+## Updated Summary
 
 | Phase | AI Tool | AI Used For | Human Directed |
 |---|---|---|---|
@@ -449,13 +580,14 @@ This made Kuai easier to defend as a system and easier to build consistently. It
 | Backend build | Claude | Express server, normalization logic, endpoints | API scope, mock data shape, normalization requirement |
 | Resistance moments | Claude | Documenting and enforcing design/course spec | Holding architecture and scope under pressure |
 | HTML version | Claude | Full port to vanilla HTML/CSS/JS | Simplicity requirement, scope |
-| Documentation | Claude | AI Direction Log, architecture summaries | All content, framing, decisions about what to include |
-
----
-
-**The most important shift AI helped support was the transition of Kuai from a saved wishlist idea to a calm, structured, data-driven shopping-planning system that supports search, organization, editing, price comparison, and more deliberate purchasing decisions.**
-
-AI did not replace the design process. It was used as a tool to help shape, clarify, and strengthen it.
+| Typography | Claude | Font system evaluation and replacement | Final font decision, weight hierarchy |
+| UX audit | Claude | Heuristic evaluation, empty state fixes, friction reduction | Which problems to fix, copy direction |
+| Brand elevation | Claude | Visual refinement referencing Apple/Glossier/Nike/Everlane | Which references to apply, what to keep from original |
+| Product images | Claude | Image embedding, URL management, quality diagnosis | Image sourcing, quality standards |
+| Responsive design | Claude | Three-breakpoint layout system, mobile nav, tablet FAB | Breakpoint decisions, TV presentation requirement |
+| Deployment | Claude | GitHub Pages setup, Railway debugging, architecture simplification | Platform choice, simplification decision |
+| Splash + micro | Claude | Splash animation, micro-interaction system | Timing, which interactions to include, onboarding removal |
+| Documentation | Claude | AI Direction Log updates | All content, framing, decisions about what to include |
 
 ---
 
