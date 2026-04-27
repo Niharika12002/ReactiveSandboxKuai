@@ -766,12 +766,249 @@
       .ctrl-fab { display: flex; }
     }
 
+
+    /* ─── SPLASH SCREEN ─────────────────────────────────────────────────── */
+    .splash {
+      position: fixed; inset: 0; z-index: 9000;
+      background: var(--bg-panel);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0;
+      transition: opacity .5s var(--ease), transform .5s var(--ease);
+    }
+    .splash.hide {
+      opacity: 0; pointer-events: none; transform: scale(1.03);
+    }
+    .splash-logo {
+      font-size: 72px; font-weight: 900; color: var(--gold);
+      letter-spacing: -.04em; line-height: 1;
+      animation: splashLogoIn .8s var(--ease-out) forwards;
+      opacity: 0;
+    }
+    .splash-tagline {
+      font-size: 13px; font-weight: 600; color: var(--text-3);
+      letter-spacing: .18em; text-transform: uppercase; margin-top: 14px;
+      animation: splashTagIn .6s var(--ease-out) .5s forwards;
+      opacity: 0;
+    }
+    .splash-bar-wrap {
+      width: 48px; height: 2px; background: var(--border);
+      border-radius: 2px; margin-top: 40px; overflow: hidden;
+      animation: splashTagIn .4s var(--ease-out) .8s forwards;
+      opacity: 0;
+    }
+    .splash-bar {
+      height: 100%; width: 0; background: var(--gold);
+      border-radius: 2px;
+      animation: splashProgress 1.4s var(--ease) 1s forwards;
+    }
+    @keyframes splashLogoIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes splashTagIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    @keyframes splashProgress {
+      from { width: 0; } to { width: 100%; }
+    }
+
+    /* ─── ONBOARDING ─────────────────────────────────────────────────────── */
+    .onboarding {
+      position: fixed; inset: 0; z-index: 8999;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 24px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .4s var(--ease);
+    }
+    .onboarding.show { opacity: 1; pointer-events: all; }
+    .ob-slides { width: 100%; max-width: 420px; position: relative; }
+    .ob-slide {
+      display: none; flex-direction: column;
+      align-items: center; text-align: center; gap: 0;
+      animation: obSlideIn .4s var(--ease-out) forwards;
+    }
+    .ob-slide.active { display: flex; }
+    @keyframes obSlideIn {
+      from { opacity: 0; transform: translateX(24px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .ob-icon {
+      font-size: 64px; margin-bottom: 28px; line-height: 1;
+      animation: obIconBounce .5s var(--ease-out) .1s both;
+    }
+    @keyframes obIconBounce {
+      0%   { transform: scale(.6); opacity: 0; }
+      70%  { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .ob-step {
+      font-size: 10px; font-weight: 800; color: var(--gold);
+      letter-spacing: .2em; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .ob-title {
+      font-size: 28px; font-weight: 900; color: var(--text-1);
+      letter-spacing: -.03em; line-height: 1.1; margin-bottom: 14px;
+    }
+    .ob-body {
+      font-size: 15px; color: var(--text-3); font-weight: 400;
+      line-height: 1.65; max-width: 300px; margin-bottom: 40px;
+    }
+    .ob-dots {
+      display: flex; gap: 7px; margin-bottom: 32px;
+    }
+    .ob-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--border); transition: all .25s var(--ease);
+    }
+    .ob-dot.active { background: var(--gold); width: 22px; border-radius: 4px; }
+    .ob-actions { display: flex; gap: 10px; width: 100%; max-width: 300px; }
+    .ob-btn-next {
+      flex: 1; padding: 14px 0; background: var(--gold); color: #fff;
+      border: none; border-radius: var(--r-md); font-size: 14px; font-weight: 800;
+      letter-spacing: .03em; cursor: pointer;
+      transition: background .15s, transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 16px rgba(181,144,74,.3);
+    }
+    .ob-btn-next:hover { background: var(--gold-dk); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(181,144,74,.4); }
+    .ob-btn-next:active { transform: translateY(0); }
+    .ob-btn-skip {
+      padding: 14px 20px; background: transparent; color: var(--text-3);
+      border: 1.5px solid var(--border); border-radius: var(--r-md);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: all .15s;
+    }
+    .ob-btn-skip:hover { border-color: var(--text-3); color: var(--text-2); }
+
+    /* ─── MICRO-INTERACTIONS ─────────────────────────────────────────────── */
+
+    /* Item card entrance animation */
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .item-card-anim {
+      animation: cardIn .25s var(--ease-out) both;
+    }
+
+    /* Heart bounce */
+    @keyframes heartBounce {
+      0%   { transform: scale(1); }
+      30%  { transform: scale(1.4); }
+      60%  { transform: scale(.9); }
+      100% { transform: scale(1); }
+    }
+    .heart-bounce svg { animation: heartBounce .4s var(--ease-out) forwards; }
+
+    /* Add button success ripple */
+    @keyframes addSuccess {
+      0%   { box-shadow: 0 0 0 0 rgba(90,136,104,.5); }
+      100% { box-shadow: 0 0 0 14px rgba(90,136,104,0); }
+    }
+    .catalog-add.added { animation: addSuccess .5s var(--ease-out) forwards; }
+
+    /* Priority button press */
+    .pri-btn:active { transform: scale(.95); }
+
+    /* Notes saved flash */
+    @keyframes notesSavedFlash {
+      0%,100% { background: var(--bg-panel); }
+      40%     { background: var(--sage-lt); border-color: var(--sage); }
+    }
+    .notes-saved-flash { animation: notesSavedFlash .6s var(--ease) forwards; }
+
+    /* Remove button shake confirmation */
+    @keyframes removeShake {
+      0%,100% { transform: translateX(0); }
+      20%     { transform: translateX(-4px); }
+      40%     { transform: translateX(4px); }
+      60%     { transform: translateX(-3px); }
+      80%     { transform: translateX(3px); }
+    }
+    .remove-shake { animation: removeShake .4s var(--ease) forwards; }
+
+    /* Topbar pill pop when first item saved */
+    @keyframes pillPop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+    .pill-pop { animation: pillPop .4s var(--ease-out) forwards; }
+
+    /* Detail image fade-in on selection */
+    @keyframes imgFadeIn {
+      from { opacity: 0; transform: scale(.98); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .detail-img-anim { animation: imgFadeIn .35s var(--ease-out) forwards; }
+
+    /* Price card pop-in */
+    @keyframes priceCardIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .price-card { animation: priceCardIn .25s var(--ease-out) both; }
+    .price-card:nth-child(2) { animation-delay: .06s; }
+    .price-card:nth-child(3) { animation-delay: .12s; }
+
+    /* Search focus ring pulse */
+    @keyframes focusPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(181,144,74,.3); }
+      100% { box-shadow: 0 0 0 6px rgba(181,144,74,0); }
+    }
+    .search-input:focus { animation: focusPulse .4s var(--ease-out); }
+
     /* ─── UTILITIES ──────────────────────────────────────────────────────── */
     .icon { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
   </style>
 </head>
 <body>
+<!-- ── SPLASH SCREEN ── -->
+<div class="splash" id="splash">
+  <div class="splash-logo">kuai</div>
+  <div class="splash-tagline">Save it. Compare it. Buy it right.</div>
+  <div class="splash-bar-wrap"><div class="splash-bar"></div></div>
+</div>
+
+<!-- ── ONBOARDING ── -->
+<div class="onboarding" id="onboarding">
+  <div class="ob-slides">
+
+    <div class="ob-slide active" id="ob0">
+      <div class="ob-icon">🔍</div>
+      <div class="ob-step">Step 1 of 3</div>
+      <div class="ob-title">Search anything you want</div>
+      <div class="ob-body">Type a product name, brand, or category. Kuai finds it instantly from a curated catalog.</div>
+    </div>
+
+    <div class="ob-slide" id="ob1">
+      <div class="ob-icon">✦</div>
+      <div class="ob-step">Step 2 of 3</div>
+      <div class="ob-title">Save to your collection</div>
+      <div class="ob-body">Hit + to save items to your personal wishlist. Add notes, set priorities, and mark favorites.</div>
+    </div>
+
+    <div class="ob-slide" id="ob2">
+      <div class="ob-icon">💰</div>
+      <div class="ob-step">Step 3 of 3</div>
+      <div class="ob-title">Compare prices. Buy smart.</div>
+      <div class="ob-body">Kuai shows you the same item across multiple retailers so you always get the best price.</div>
+    </div>
+
+  </div>
+  <div class="ob-dots">
+    <div class="ob-dot active" id="dot0"></div>
+    <div class="ob-dot" id="dot1"></div>
+    <div class="ob-dot" id="dot2"></div>
+  </div>
+  <div class="ob-actions">
+    <button class="ob-btn-skip" id="obSkip">Skip</button>
+    <button class="ob-btn-next" id="obNext">Next →</button>
+  </div>
+</div>
+
 <div class="app">
 
   <!-- ── TOPBAR ── -->
@@ -1450,6 +1687,135 @@ window.addEventListener('resize', () => {
   }
   if (!isTablet()) closeCtrl();
 });
+
+// ── SPLASH + ONBOARDING + MICRO-INTERACTIONS ───────────────────────────────
+
+const splashEl = document.getElementById('splash');
+const onboardingEl = document.getElementById('onboarding');
+const ONBOARDED_KEY = 'kuai-onboarded-v1';
+
+// Dismiss splash and optionally show onboarding
+function dismissSplash() {
+  splashEl.style.opacity = '0';
+  splashEl.style.transform = 'scale(1.04)';
+  splashEl.style.transition = 'opacity .5s ease, transform .5s ease';
+  setTimeout(() => {
+    splashEl.style.display = 'none';
+    if (!localStorage.getItem(ONBOARDED_KEY)) {
+      onboardingEl.style.opacity = '1';
+      onboardingEl.style.pointerEvents = 'all';
+    }
+  }, 500);
+}
+
+setTimeout(dismissSplash, 2600);
+
+// Onboarding slides
+let obStep = 0;
+const obSlideEls = document.querySelectorAll('.ob-slide');
+const obDotEls = document.querySelectorAll('.ob-dot');
+const obNextBtn = document.getElementById('obNext');
+const obSkipBtn = document.getElementById('obSkip');
+
+function goOb(n) {
+  obSlideEls.forEach(s => s.classList.remove('active'));
+  obDotEls.forEach(d => d.classList.remove('active'));
+  obStep = n;
+  obSlideEls[obStep].classList.add('active');
+  obDotEls[obStep].classList.add('active');
+  obNextBtn.textContent = obStep === 2 ? 'Get Started ✦' : 'Next →';
+}
+
+obNextBtn.addEventListener('click', () => {
+  if (obStep < 2) { goOb(obStep + 1); }
+  else { closeOnboarding(); }
+});
+obSkipBtn.addEventListener('click', closeOnboarding);
+
+function closeOnboarding() {
+  onboardingEl.style.opacity = '0';
+  onboardingEl.style.pointerEvents = 'none';
+  onboardingEl.style.transition = 'opacity .35s ease';
+  localStorage.setItem(ONBOARDED_KEY, '1');
+  setTimeout(() => { onboardingEl.style.display = 'none'; }, 400);
+}
+
+// Micro-interactions
+
+// Heart bounce on favorite
+document.getElementById('favBtn').addEventListener('click', function() {
+  this.style.transform = 'scale(1.3)';
+  setTimeout(() => { this.style.transform = 'scale(1)'; this.style.transition = 'transform .2s ease'; }, 150);
+});
+
+// Topbar pill pop on new item
+let _lastCount = 0;
+function checkPillPop() {
+  if (state.items.length > _lastCount) {
+    const pill = document.getElementById('topPill');
+    pill.style.transform = 'scale(1.18)';
+    pill.style.transition = 'transform .15s ease';
+    setTimeout(() => { pill.style.transform = 'scale(1)'; }, 200);
+  }
+  _lastCount = state.items.length;
+}
+
+// Detail image fade on item switch
+let _lastImgId = null;
+function animateImg() {
+  const item = selectedItem();
+  if (!item || item.id === _lastImgId) return;
+  _lastImgId = item.id;
+  const img = document.getElementById('detailImg');
+  img.style.opacity = '0';
+  img.style.transform = 'scale(.97)';
+  img.style.transition = 'none';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      img.style.transition = 'opacity .3s ease, transform .3s ease';
+      img.style.opacity = '1';
+      img.style.transform = 'scale(1)';
+    });
+  });
+}
+
+// Item card stagger entrance
+function animateCards() {
+  document.querySelectorAll('.item-card').forEach((card, i) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateX(-8px)';
+    card.style.transition = 'none';
+    setTimeout(() => {
+      card.style.transition = 'opacity .2s ease, transform .2s ease';
+      card.style.opacity = '1';
+      card.style.transform = 'translateX(0)';
+    }, i * 40);
+  });
+}
+
+// Notes save flash
+document.getElementById('notesSave').addEventListener('click', () => {
+  setTimeout(() => {
+    const box = document.querySelector('.notes-box');
+    if (!box) return;
+    box.style.transition = 'background .15s ease, border-color .15s ease';
+    box.style.background = 'var(--sage-lt)';
+    box.style.borderColor = 'var(--sage)';
+    setTimeout(() => {
+      box.style.background = '';
+      box.style.borderColor = '';
+    }, 600);
+  }, 50);
+}, true);
+
+// Wrap render to add micro-interactions
+const _kuaiBaseRender = window.render || render;
+window.render = function kuaiRender() {
+  _kuaiBaseRender();
+  checkPillPop();
+  animateImg();
+  setTimeout(animateCards, 20);
+};
 
 </script>
 </body>
