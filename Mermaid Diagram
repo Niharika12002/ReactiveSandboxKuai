@@ -1,0 +1,7 @@
+# Kuai — System Flow Diagram
+
+```mermaid
+flowchart TD
+    A["User types product query"] --> B["Kuai Search Bar"]
+    ...
+```
