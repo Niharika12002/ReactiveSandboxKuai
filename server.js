@@ -207,49 +207,23 @@ let savedItems = [];
 
 // ─── ROUTES ───────────────────────────────────────────────────────────────────
 
-app.get('/api/search', async (req, res) => {
+app.get('/api/search', (req, res) => {
   const q = (req.query.q || "").toLowerCase().trim();
   if (!q || q.length < 2) return res.json([]);
 
   const savedNames = new Set(savedItems.map(i => i.name.toLowerCase()));
 
-  try {
-    const response = await fetch('https://fakestoreapi.com/products');
-    const products = await response.json();
+  const results = MOCK_CATALOG.filter(p =>
+    !savedNames.has(p.title.toLowerCase()) &&
+    (
+      p.title.toLowerCase().includes(q) ||
+      p.brand_name.toLowerCase().includes(q) ||
+      p.product_type.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q)
+    )
+  ).slice(0, 5);
 
-    const results = products
-      .filter(p =>
-        !savedNames.has(p.title.toLowerCase()) &&
-        (
-          p.title.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q) ||
-          (p.description && p.description.toLowerCase().includes(q))
-        )
-      )
-      .slice(0, 5)
-      .map(p => {
-        const base = Number(p.price) || 0;
-
-        return {
-          title: p.title,
-          brand_name: p.category,
-          product_type: p.category,
-          description: p.description,
-          img_url: p.image,
-          raw_price: `$${base.toFixed(2)}`,
-          retailers: [
-            { store: "Amazon", amt: +(base + 20).toFixed(2), link: "https://amazon.com" },
-            { store: "Target", amt: +(base + 10).toFixed(2), link: "https://target.com" },
-            { store: "Best Buy", amt: +base.toFixed(2), link: "https://bestbuy.com" }
-          ]
-        };
-      });
-
-    res.json(results);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to fetch products' });
-  }
+  res.json(results);
 });
 
 // GET /api/saved-items — returns normalized, sorted, filtered collection
@@ -303,7 +277,7 @@ app.delete('/api/saved-items/:id', (req, res) => {
 });
 
 // ─── START ────────────────────────────────────────────────────────────────────
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`\n✦ Kuai API running at http://localhost:${PORT}\n`);
   console.log(`  GET    /api/search?q=query`);
