@@ -773,10 +773,11 @@
       background: var(--bg-panel);
       display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 0;
-      transition: opacity .5s var(--ease), transform .5s var(--ease);
+      opacity: 1;
+      transition: opacity .6s var(--ease), transform .6s var(--ease);
     }
     .splash.hide {
-      opacity: 0; pointer-events: none; transform: scale(1.03);
+      opacity: 0; pointer-events: none;
     }
     .splash-logo {
       font-size: 72px; font-weight: 900; color: var(--gold);
@@ -820,9 +821,10 @@
       align-items: center; justify-content: center;
       padding: 40px 24px;
       opacity: 0; pointer-events: none;
-      transition: opacity .4s var(--ease);
+      transform: translateY(12px);
+      transition: opacity .5s var(--ease), transform .5s var(--ease);
     }
-    .onboarding.show { opacity: 1; pointer-events: all; }
+    .onboarding.show { opacity: 1; pointer-events: all; transform: translateY(0); }
     .ob-slides { width: 100%; max-width: 420px; position: relative; }
     .ob-slide {
       display: none; flex-direction: column;
@@ -1696,16 +1698,17 @@ const ONBOARDED_KEY = 'kuai-onboarded-v1';
 
 // Dismiss splash and optionally show onboarding
 function dismissSplash() {
-  splashEl.style.opacity = '0';
-  splashEl.style.transform = 'scale(1.04)';
-  splashEl.style.transition = 'opacity .5s ease, transform .5s ease';
+  // Use CSS class for clean GPU-accelerated transition
+  splashEl.classList.add('hide');
   setTimeout(() => {
     splashEl.style.display = 'none';
-    if (!localStorage.getItem(ONBOARDED_KEY)) {
-      onboardingEl.style.opacity = '1';
-      onboardingEl.style.pointerEvents = 'all';
-    }
-  }, 500);
+    // Small delay before onboarding appears so transitions don't overlap
+    setTimeout(() => {
+      if (!localStorage.getItem(ONBOARDED_KEY)) {
+        onboardingEl.classList.add('show');
+      }
+    }, 80);
+  }, 650);
 }
 
 setTimeout(dismissSplash, 2600);
@@ -1733,11 +1736,9 @@ obNextBtn.addEventListener('click', () => {
 obSkipBtn.addEventListener('click', closeOnboarding);
 
 function closeOnboarding() {
-  onboardingEl.style.opacity = '0';
-  onboardingEl.style.pointerEvents = 'none';
-  onboardingEl.style.transition = 'opacity .35s ease';
+  onboardingEl.classList.remove('show');
   localStorage.setItem(ONBOARDED_KEY, '1');
-  setTimeout(() => { onboardingEl.style.display = 'none'; }, 400);
+  setTimeout(() => { onboardingEl.style.display = 'none'; }, 550);
 }
 
 // Micro-interactions
