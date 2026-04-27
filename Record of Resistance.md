@@ -164,4 +164,61 @@ I could articulate not just what the palette should look like but what it should
 
 ---
 
+## Resistance Moment 9 — Rejecting the Serif Font for a Shopping-First Type System
+
+**What AI produced:**
+The initial typography system paired Playfair Display (an italic editorial serif) with DM Sans for body copy. The combination was elegant and visually refined but read as literary rather than transactional.
+
+**Why I rejected or questioned it:**
+Kuai is a task-oriented shopping tool. Users are scanning prices, comparing items, and making decisions quickly. Serif fonts slow reading in functional UI contexts. When I evaluated the interface against real shopping apps — ASOS, Farfetch, Shopbop, Allbirds — every one of them used an all-sans type system. Playfair Display was making Kuai feel like a magazine, not a product.
+
+**What I changed or did instead:**
+I directed the AI to drop the serif entirely and move to a single-family system: Nunito Sans at weight 800–900 for display and 600–700 for UI labels. I also directed that prices, stats, and figures use weight 800 so they read as data, not decoration. Typography hierarchy is now carried entirely by weight — not by mixing families.
+
+**How the final decision improved Kuai:**
+The interface became faster to read, more consistent, and more appropriate for a tool. The type system now supports the product's function rather than working against it.
+
+**What this shows about my role as designer:**
+I evaluated the typography against user behavior, not just visual taste. Knowing when a design choice is beautiful but wrong for the context is a core design skill.
+
+---
+
+## Resistance Moment 10 — Rejecting the Onboarding Overlay Approach
+
+**What AI produced:**
+After directing AI to add a splash screen and onboarding flow, multiple implementations were attempted where the onboarding slides appeared as overlays on top of the rendered app — using `position: fixed` containers with `backdrop-filter` blur, floating cards, and stacked absolutely-positioned screens.
+
+**Why I rejected or questioned it:**
+Every implementation produced the same critical visual failure: when "Get Started" was clicked, the app rendered incorrectly with all panels stacked vertically instead of in the three-column layout. The onboarding was actively breaking the product's core UI. After three separate attempts using different technical approaches — CSS class toggling, inline style overrides, and a full DOM rebuild — the same failure recurred each time.
+
+**What I changed or did instead:**
+I made the call to remove the onboarding entirely rather than continue iterating on a component that was destabilizing the interface. The splash screen was retained because it works correctly and gives Kuai a premium opening moment without any layout risk. The onboarding content — search, save, compare — is communicated through the empty state design and the search hint chips already built into the Browser panel.
+
+**How the final decision improved Kuai:**
+The interface remained stable. A broken onboarding is worse than no onboarding — it damages first impressions instead of improving them. The decision to cut it protected the product's quality.
+
+**What this shows about my role as designer:**
+Knowing when to cut a feature is as important as knowing how to build one. I held the quality bar and made a clear product decision rather than continuing to iterate on something that was causing more harm than good.
+
+---
+
+## Resistance Moment 11 — Rejecting Over-Engineered Deployment for a Simpler Live URL
+
+**What AI produced:**
+The first deployment approach used Railway to host the Express backend, with GitHub Pages serving the HTML frontend. This required maintaining two separate services, two URLs, environment variables, and a live server that could go offline, run out of credits, or fail to redeploy.
+
+**Why I rejected or questioned it:**
+The Railway deployment introduced persistent `502 Bad Gateway` errors, dynamic PORT configuration issues, and eventually became unavailable when the free plan expired. More fundamentally, the backend was serving mock data — there was no real database, no authentication, no user-specific persistence. Running a server to serve hardcoded JSON was architectural overengineering with no product benefit.
+
+**What I changed or did instead:**
+I directed the removal of the Express backend entirely. All product logic — catalog search, saved items management, filtering, sorting — was moved into the standalone `kuai.html` file. The single file was deployed to GitHub Pages, giving Kuai a permanent, free, always-on URL with no dependencies.
+
+**How the final decision improved Kuai:**
+The live link works reliably from any device. There is nothing to start, nothing to maintain, and nothing that can go offline. The product is more accessible and easier to demonstrate — which matters for a classroom presentation.
+
+**What this shows about my role as designer:**
+I evaluated the deployment against the actual requirements of the product and made a pragmatic call. Complexity that serves no user need is a design problem, not just a technical one.
+
+---
+
 *Document prepared for AI 201: Creative Computing with AI — Project 2 submission.*
