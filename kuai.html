@@ -578,6 +578,194 @@
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .toast.success { background: var(--sage-dk); }
 
+
+    /* ─── RESPONSIVE BREAKPOINTS ─────────────────────────────────────────── */
+
+    /* ── LARGE / TV (1440px+) ── Scale everything up for big screens */
+    @media (min-width: 1440px) {
+      :root {
+        --r-sm: 10px; --r-md: 14px; --r-lg: 22px; --r-xl: 28px;
+      }
+      body { font-size: 16px; }
+      .topbar { height: 64px; padding: 0 32px; }
+      .logo { font-size: 26px; }
+      .tagline { font-size: 12px; }
+      .topbar-pill { font-size: 13px; padding: 6px 14px; }
+      .theme-btn { width: 40px; height: 40px; font-size: 17px; }
+      .panels { grid-template-columns: 24% 1fr 20%; }
+      .browser-header { padding: 22px 20px 16px; }
+      .browser-title { font-size: 12px; margin-bottom: 14px; }
+      .search-input { height: 44px; font-size: 14px; padding: 0 32px 0 40px; }
+      .search-icon { left: 14px; }
+      .search-clear { right: 12px; width: 22px; height: 22px; font-size: 11px; }
+      .hints-label { font-size: 11px; }
+      .hint-chip { font-size: 13px; padding: 6px 14px; }
+      .catalog-thumb { width: 46px; height: 46px; }
+      .catalog-name { font-size: 14px; }
+      .catalog-sub { font-size: 12px; }
+      .catalog-add { width: 34px; height: 34px; font-size: 24px; }
+      .item-thumb { width: 56px; height: 56px; }
+      .item-name { font-size: 14px; }
+      .item-brand { font-size: 12px; }
+      .item-price { font-size: 14px; }
+      .badge { font-size: 10px; padding: 3px 8px; }
+      .list-label { font-size: 11px; }
+      .item-card { padding: 12px 10px; gap: 12px; }
+      .detail-scroll { padding: 32px 40px 60px; }
+      .detail-name { font-size: 34px; }
+      .detail-brand { font-size: 15px; }
+      .section-label { font-size: 11px; margin-bottom: 12px; }
+      .price-amount { font-size: 28px; }
+      .price-retailer { font-size: 13px; }
+      .price-best-tag { font-size: 11px; }
+      .price-savings-text { font-size: 14px; }
+      .pri-btn { font-size: 14px; padding: 10px 0; }
+      .action-btn { font-size: 14px; padding: 14px 18px; }
+      .notes-text { font-size: 15px; }
+      .notes-textarea { font-size: 15px; min-height: 100px; }
+      .notes-save { font-size: 14px; padding: 10px 22px; }
+      .notes-cancel { font-size: 14px; padding: 10px 18px; }
+      .detail-empty-wordmark { font-size: 72px; }
+      .detail-empty-title { font-size: 28px; }
+      .detail-empty-sub { font-size: 16px; max-width: 340px; }
+      .hint-card { font-size: 14px; padding: 13px 18px; }
+      .hint-card-icon { font-size: 20px; }
+      .ctrl-header { padding: 20px 18px 14px; }
+      .ctrl-title { font-size: 12px; }
+      .ctrl-sec { padding: 16px 18px; }
+      .ctrl-sec-title { font-size: 11px; }
+      .ctrl-select { height: 40px; font-size: 14px; }
+      .ctrl-toggle-label { font-size: 14px; }
+      .sw { width: 40px; height: 24px; }
+      .sw::after { width: 18px; height: 18px; }
+      .sw.on::after { transform: translateX(16px); }
+      .stat-n { font-size: 32px; }
+      .stat-l { font-size: 11px; }
+      .stat { padding: 14px 12px; }
+      .remove-btn { font-size: 14px; padding: 12px 0; }
+      .sel-item-name { font-size: 13px; }
+      .sel-item-brand { font-size: 12px; }
+      .empty-title { font-size: 16px; }
+      .empty-sub { font-size: 14px; }
+      .toast { font-size: 15px; padding: 12px 26px; }
+    }
+
+    /* ── TABLET (768px – 1199px) ── Two panels: browser + detail, controls in overlay */
+    @media (max-width: 1199px) {
+      .panels { grid-template-columns: 32% 1fr; }
+      .ctrl-panel {
+        display: none;
+        position: fixed; top: 52px; right: 0; bottom: 0;
+        width: 280px; z-index: 200;
+        box-shadow: var(--shadow-lg);
+        border-left: 1px solid var(--border);
+      }
+      .ctrl-panel.open { display: flex; flex-direction: column; }
+      .ctrl-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,.3); z-index: 199;
+      }
+      .ctrl-overlay.show { display: block; }
+      .ctrl-fab {
+        display: flex; position: fixed;
+        bottom: 24px; right: 24px;
+        width: 50px; height: 50px; border-radius: 50%;
+        background: var(--gold); color: #fff;
+        align-items: center; justify-content: center;
+        font-size: 20px; box-shadow: var(--shadow-lg);
+        z-index: 198; transition: background var(--duration), transform var(--duration);
+        border: none; cursor: pointer;
+      }
+      .ctrl-fab:hover { background: var(--gold-dk); transform: scale(1.08); }
+    }
+
+    /* ── MOBILE (< 768px) ── Single panel with bottom tab nav */
+    @media (max-width: 767px) {
+      html, body { overflow: hidden; }
+      .app { height: 100dvh; }
+      .topbar { height: 48px; padding: 0 14px; }
+      .logo { font-size: 18px; }
+      .logo-divider, .tagline { display: none; }
+      .topbar-pill { font-size: 10px; padding: 3px 9px; }
+      .theme-btn { width: 30px; height: 30px; font-size: 13px; }
+
+      .panels {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+        padding-bottom: 60px;
+      }
+
+      /* Only show active panel */
+      .panel { display: none; }
+      .panel.active { display: flex; }
+
+      /* Hide ctrl panel on mobile — accessed via bottom nav */
+      .ctrl-panel { display: none !important; }
+      .ctrl-overlay { display: none !important; }
+      .ctrl-fab { display: none !important; }
+
+      /* Bottom navigation */
+      .bottom-nav {
+        display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+        height: 60px; background: var(--bg-panel);
+        border-top: 1px solid var(--border);
+        z-index: 100;
+      }
+      .nav-tab {
+        flex: 1; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 3px;
+        background: none; border: none; cursor: pointer;
+        color: var(--text-3); transition: color var(--duration);
+        font-size: 9px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: .08em;
+      }
+      .nav-tab.active { color: var(--gold); }
+      .nav-tab svg { flex-shrink: 0; }
+      .nav-tab-dot {
+        width: 5px; height: 5px; border-radius: 50%;
+        background: var(--gold); display: none;
+      }
+      .nav-tab.has-count .nav-tab-dot { display: block; }
+
+      /* Mobile detail adjustments */
+      .detail-scroll { padding: 16px 16px 32px; }
+      .detail-name { font-size: 22px; }
+      .detail-empty { padding: 32px 24px; }
+      .detail-empty-wordmark { font-size: 40px; }
+      .detail-empty-title { font-size: 18px; }
+      .detail-empty-sub { font-size: 12px; }
+      .price-row { gap: 6px; }
+      .price-card { min-width: 70px; padding: 10px 10px; }
+      .price-amount { font-size: 18px; }
+      .action-row { gap: 6px; }
+      .action-btn { padding: 10px 10px; font-size: 12px; }
+      .priority-row { gap: 5px; }
+      .pri-btn { font-size: 12px; padding: 7px 0; }
+
+      /* Mobile browser adjustments */
+      .browser-header { padding: 12px 12px 10px; }
+      .search-hints { padding: 8px 12px 6px; }
+      .item-thumb { width: 40px; height: 40px; }
+
+      /* Mobile controls panel */
+      .ctrl-mobile {
+        display: flex; flex-direction: column;
+        overflow-y: auto; height: 100%; background: var(--bg-panel);
+      }
+    }
+
+    /* Show bottom nav only on mobile */
+    .bottom-nav { display: none; }
+    @media (max-width: 767px) {
+      .bottom-nav { display: flex; }
+    }
+
+    /* Show FAB only on tablet */
+    .ctrl-fab { display: none; }
+    @media (min-width: 768px) and (max-width: 1199px) {
+      .ctrl-fab { display: flex; }
+    }
+
     /* ─── UTILITIES ──────────────────────────────────────────────────────── */
     .icon { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
@@ -604,7 +792,7 @@
   <div class="panels">
 
     <!-- ── BROWSER PANEL ── -->
-    <aside class="panel browser-panel">
+    <aside class="panel browser-panel active" id="panelBrowser">
       <div class="browser-header">
         <div class="browser-title">My Collection</div>
         <div class="search-wrap">
@@ -640,7 +828,7 @@
     </aside>
 
     <!-- ── DETAIL PANEL ── -->
-    <main class="panel detail-panel" aria-label="Product detail">
+    <main class="panel detail-panel" id="panelDetail" aria-label="Product detail">
 
       <!-- Empty state — Glossier warmth, Apple calm -->
       <div class="detail-empty" id="detailEmpty">
@@ -720,7 +908,7 @@
     </main>
 
     <!-- ── CONTROLLER PANEL ── -->
-    <aside class="panel ctrl-panel" aria-label="Controls">
+    <aside class="panel ctrl-panel" id="panelCtrl" aria-label="Controls">
       <div class="ctrl-header"><div class="ctrl-title">Controls</div></div>
 
       <!-- Stats overview -->
@@ -790,6 +978,31 @@
       </div>
     </aside>
   </div>
+
+  <!-- Tablet: controls overlay -->
+  <div class="ctrl-overlay" id="ctrlOverlay"></div>
+
+  <!-- Tablet: FAB to open controls -->
+  <button class="ctrl-fab" id="ctrlFab" aria-label="Open controls" title="Controls">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h14M3 10h14M3 15h14"/><circle cx="7" cy="5" r="2" fill="currentColor" stroke="none"/><circle cx="13" cy="10" r="2" fill="currentColor" stroke="none"/><circle cx="7" cy="15" r="2" fill="currentColor" stroke="none"/></svg>
+  </button>
+
+  <!-- Mobile: bottom tab navigation -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-tab active" data-panel="browser" id="tabBrowser">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg>
+      <div class="nav-tab-dot"></div>
+      Collection
+    </button>
+    <button class="nav-tab" data-panel="detail" id="tabDetail">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 10h6M7 13h4"/></svg>
+      Detail
+    </button>
+    <button class="nav-tab" data-panel="ctrl" id="tabCtrl">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h14M3 10h14M3 15h14"/><circle cx="7" cy="5" r="2" fill="currentColor" stroke="none"/><circle cx="13" cy="10" r="2" fill="currentColor" stroke="none"/><circle cx="7" cy="15" r="2" fill="currentColor" stroke="none"/></svg>
+      Controls
+    </button>
+  </nav>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -1176,6 +1389,68 @@ if (savedTheme) {
 }
 
 render();
+
+// ── RESPONSIVE BEHAVIOUR ───────────────────────────────────────────────────
+
+function isMobile() { return window.innerWidth < 768; }
+function isTablet() { return window.innerWidth >= 768 && window.innerWidth < 1200; }
+
+// Mobile: switch visible panel
+function showPanel(name) {
+  if (!isMobile()) return;
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  if (name === 'browser') {
+    document.getElementById('panelBrowser').classList.add('active');
+    document.getElementById('tabBrowser').classList.add('active');
+  } else if (name === 'detail') {
+    document.getElementById('panelDetail').classList.add('active');
+    document.getElementById('tabDetail').classList.add('active');
+  } else if (name === 'ctrl') {
+    document.getElementById('panelCtrl').classList.add('active');
+    document.getElementById('tabCtrl').classList.add('active');
+  }
+}
+
+// Mobile: bottom nav clicks
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => showPanel(tab.dataset.panel));
+});
+
+// Mobile: auto-switch to detail when item selected
+const _origSelect = () => {};
+document.getElementById('savedList').addEventListener('click', () => {
+  if (isMobile()) setTimeout(() => showPanel('detail'), 50);
+});
+
+// Tablet: FAB opens/closes controls panel
+const ctrlFab = document.getElementById('ctrlFab');
+const ctrlOverlay = document.getElementById('ctrlOverlay');
+const ctrlPanel = document.getElementById('panelCtrl');
+
+function openCtrl() {
+  ctrlPanel.classList.add('open');
+  ctrlOverlay.classList.add('show');
+}
+function closeCtrl() {
+  ctrlPanel.classList.remove('open');
+  ctrlOverlay.classList.remove('show');
+}
+
+if (ctrlFab) ctrlFab.addEventListener('click', () => {
+  ctrlPanel.classList.contains('open') ? closeCtrl() : openCtrl();
+});
+if (ctrlOverlay) ctrlOverlay.addEventListener('click', closeCtrl);
+
+// Handle resize: reset panel visibility
+window.addEventListener('resize', () => {
+  if (!isMobile()) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panelBrowser').classList.add('active');
+  }
+  if (!isTablet()) closeCtrl();
+});
+
 </script>
 </body>
 </html>
