@@ -221,4 +221,99 @@ I evaluated the deployment against the actual requirements of the product and ma
 
 ---
 
+## Resistance Moment 12 — Rejecting the Controller Panel as a Static Control Dump
+
+**What AI produced:**
+The original Controller Panel displayed all controls at all times regardless of what the user was doing — stats, filter dropdowns, sort dropdown, toggles, and item management controls were all permanently visible in a flat vertical stack.
+
+**Why I rejected or questioned it:**
+A panel that shows everything always is not a panel — it's a settings menu. Kuai's Controller is supposed to respond to the user's context. Showing filter controls when nothing is saved, or showing priority chips when no item is selected, creates noise with no signal. The panel was visually overwhelming and its cognitive load was working against Kuai's calm, stress-reducing identity.
+
+**What I changed or did instead:**
+I directed a full redesign around a three-state contextual model: State 1 (no items) shows only a quiet empty prompt. State 2 (items exist, nothing selected) shows the stats strip and collapsed filter and sort accordions. State 3 (item selected) surfaces the selected item card, priority chips, and remove button. Filter and sort remain accessible beneath but don't compete for attention. I also directed that the priority chips replace the old priority dropdown — matching the Detail View's interaction pattern and eliminating duplication.
+
+**How the final decision improved Kuai:**
+The Controller Panel became responsive and intelligent rather than static. It surfaces only what is relevant to what the user is currently doing, which directly supports the product's stress-reducing purpose. The three-state model is now one of the most intentional UX decisions in the product.
+
+**What this shows about my role as designer:**
+I evaluated the panel not by whether it contained the right controls but by whether it showed those controls at the right moment. Contextual UI is a higher standard than completeness, and I held that standard.
+
+---
+
+## Resistance Moment 13 — Rejecting the Left-Border Priority Signal in Favor of Full Card Color
+
+**What AI produced:**
+When asked to make item cards visually communicate priority, the AI implemented a 3px colored left border accent — a subtle design pattern where a thin rail of color runs down the left edge of each card. High priority got a rust-red rail, medium got gold, low got sage.
+
+**Why I rejected or questioned it:**
+The cards looked bad. The left border was too thin and too easy to miss — the color was difficult to read at a glance, especially for items further down the list. The whole point of priority coding is to let the user scan the collection and immediately understand urgency distribution without reading individual labels. A 3px line does not achieve that. It was a timid solution to a problem that needed a confident one.
+
+**What I changed or did instead:**
+I directed full card color fill: each card takes on the full tinted background of its priority color using the existing light tokens — `--rust-lt` for High, `--gold-lt` for Medium, `--sage-lt` for Low. The price text also shifts to match the priority color so nothing fights on the tinted background. Selected state deepens to a solid border with a ring shadow in the matching priority color. I also directed the removal of the priority badge from inside the card — since the card itself already communicates priority, the badge became redundant clutter.
+
+**How the final decision improved Kuai:**
+The Browser panel became a color-coded, urgency-readable list that communicates priority at a glance without requiring the user to read a single word. A user can scan ten items and understand the priority distribution immediately — which is exactly what a shopping-planning tool should do.
+
+**What this shows about my role as designer:**
+I evaluated the solution against the actual user behavior it was supposed to support, not just whether it was technically correct. When it failed that test, I pushed for a more committed execution of the idea.
+
+---
+
+## Resistance Moment 14 — Removing the Custom Item Addition Feature
+
+**What AI produced:**
+As part of a product completeness audit, AI identified the inability to add items outside the fixed catalog as a critical gap and built a solution: a modal triggered by an "＋ Add item" button in the Browser panel header. The modal let users enter a name, brand, price, category, priority, and optional URL to create a custom item.
+
+**Why I rejected or questioned it:**
+The catalog search is the designed entry point for adding items to Kuai. It is intentional — users discover products through search, which is the natural shopping behavior Kuai is built around. A separate "Add item" button creates two parallel paths to the same action, which fragments the interaction model and contradicts the product's logic. The modal was technically complete and functional. I rejected it not because it was broken but because it was wrong for the product.
+
+**What I changed or did instead:**
+I directed the complete removal of the feature: the modal HTML, CSS, JavaScript event listeners, and the button in the browser header were all stripped. I verified zero remaining references in the file before closing the session.
+
+**How the final decision improved Kuai:**
+The Browser panel stayed clean and the interaction model stayed coherent. There is one way to add items — search — and it is the right way. Removing the feature protected Kuai's intentional design rather than layering complexity on top of it.
+
+**What this shows about my role as designer:**
+The hardest resistance is rejecting something that works. Cutting a completed, functional feature requires confidence in the product vision and the willingness to prioritize coherence over completeness. That is a design decision, not a technical one.
+
+---
+
+## Resistance Moment 15 — Correcting Six Interaction Quality Failures After Live Testing
+
+**What AI produced:**
+After a round of live testing, six specific interaction problems were identified in the built interface: all item cards animated simultaneously whenever any single card changed; the purchased button displayed two ticks when active; the price comparison cards in the Detail View looked visually selected due to the best-price styling; the Show Purchased toggle defaulted to green/on when it should default to grey/off; the sort filter existed in the Controller but served no meaningful purpose; and the favorite button showed two overlapping hearts when toggled on.
+
+**Why I rejected or questioned it:**
+None of these were acceptable in a product intended to feel polished and intentional. The double tick and double heart were visual bugs that undermined the UI's credibility. The card animation firing on all cards for a change to one card was distracting and disproportionate — a user changing a priority should not trigger a cascade of motion across the entire list. The price card styling confusion was a direct readability failure. The toggle default contradicted the intended behavior. The sort filter was dead weight.
+
+**What I changed or did instead:**
+I directed six separate targeted fixes: the card animation was moved from the global `render()` wrapper into `updateItem()` specifically, targeting only the card with the matching `data-id`; the purchased label was changed from `'✓ Purchased'` to `'Purchased'` to eliminate the duplicate tick; the best-price card was restyled to remove green fill and ring shadow, leaving only the colored amount text and label as signals; the Show Purchased default was hardcoded to `false` and the storage key was bumped to clear stale persisted state; the sort accordion, select, event listener, state field, and `visibleItems` logic were fully purged; and the favorite heart SVG was updated to set `fill="currentColor"` when favorited and `fill="none"` when not, resolving the overlap.
+
+**How the final decision improved Kuai:**
+Each interaction became precise. The interface now responds exactly as expected — no more, no less — which is the standard a finished product should meet.
+
+**What this shows about my role as designer:**
+Interaction quality requires live testing, not just code review. I caught these failures by using the product, not by reading the implementation. Design leadership includes the responsibility to test, identify, and hold a quality bar — and to enumerate problems specifically enough that they can be fixed correctly.
+
+---
+
+## Resistance Moment 16 — Deferring Named Shopping Lists to Protect Submission Stability
+
+**What AI produced:**
+When named shopping lists were proposed as a feature — allowing users to organize items into separate lists such as Wishlist, Gifts, Home, and For Me — AI assessed it as a strong product direction and outlined a minimal implementation: a list switcher in the Browser panel header, preset list names, and a list assignment field on each item.
+
+**Why I rejected or questioned it:**
+The feature was architecturally significant. Adding named lists would require restructuring the core `items` array into a nested `lists` structure, which would touch `visibleItems()`, `renderBrowser()`, `renderController()`, `renderStats()`, the budget bar, localStorage, and every system that reads from state. The risk of introducing bugs across the entire product — hours before the submission deadline — was not acceptable. The product was already complete, stable, and well-documented.
+
+**What I changed or did instead:**
+I made the call to defer the feature entirely. The product was submitted as-is. Named lists were acknowledged as the right next feature for a real product roadmap but the wrong feature to introduce under deadline pressure.
+
+**How the final decision improved Kuai:**
+The product remained stable and submission-ready. A broken or half-implemented feature introduced at the last moment would have been worse than the absence of the feature entirely.
+
+**What this shows about my role as designer:**
+Scope discipline is a design skill. Knowing when a product is done — and holding that line against the temptation to keep adding — is as important as knowing what to build. I evaluated the risk against the benefit and made a clear, defensible call.
+
+---
+
 *Document prepared for AI 201: Creative Computing with AI — Project 2 submission.*
