@@ -84,23 +84,16 @@
     /* Brand block — left-anchored with a gold left rail */
     .topbar-brand {
       display: flex; align-items: center;
-      height: 100%; padding: 0 24px 0 0;
-      border-right: 1px solid var(--border);
-      gap: 12px; flex-shrink: 0;
+      height: 100%; padding: 0 28px 0 22px;
+      flex-shrink: 0;
     }
-    .topbar-brand-accent {
-      width: 3px; height: 100%; background: var(--gold);
-      flex-shrink: 0; align-self: stretch;
-    }
-    .topbar-brand-inner { display: flex; flex-direction: column; justify-content: center; gap: 1px; padding-left: 18px; }
+    .topbar-brand-accent { display: none; }
+    .topbar-brand-inner { display: flex; align-items: center; }
     .logo {
       font-size: 22px; font-weight: 900; color: var(--gold);
       letter-spacing: -.04em; line-height: 1;
     }
-    .tagline {
-      font-size: 8.5px; font-weight: 700; color: var(--text-4);
-      letter-spacing: .18em; text-transform: uppercase; line-height: 1;
-    }
+    .tagline { display: none; }
 
     /* Center — app context label, tells you where you are */
     .topbar-center {
@@ -276,7 +269,17 @@
     .detail-img-wrap { width: 100%; aspect-ratio: 4/3; border-radius: var(--r-lg); overflow: hidden; margin-bottom: 20px; background: var(--bg-inset); box-shadow: var(--shadow-md); position: relative; }
     .detail-img { width: 100%; height: 100%; object-fit: contain; display: block; background: var(--bg-inset); }
     .detail-img-overlay { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; }
-    .detail-cat-badge { padding: 4px 10px; background: rgba(253,252,250,.92); border-radius: var(--r-xl); backdrop-filter: blur(8px); font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--sage-dk); border: 1px solid rgba(90,136,104,.2); }
+    .detail-cat-badge {
+      padding: 5px 12px; background: rgba(253,252,250,.92);
+      border-radius: var(--r-xl); backdrop-filter: blur(8px);
+      font-size: 10px; font-weight: 800; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--sage-dk);
+      border: 1px solid rgba(90,136,104,.25);
+      -webkit-appearance: none; cursor: pointer;
+      line-height: 1.4;
+      transition: background var(--duration), border-color var(--duration);
+    }
+    .detail-cat-badge:hover { background: rgba(253,252,250,1); border-color: rgba(90,136,104,.5); }
     [data-theme="dark"] .detail-cat-badge { background: rgba(28,24,20,.88); color: var(--sage-dk); }
 
     .detail-meta { margin-bottom: 6px; }
@@ -577,7 +580,6 @@
     .sp-line { width:48px; height:1.5px; background:var(--gold); border-radius:2px; margin-top:38px; transform:scaleX(0); transform-origin:left; animation: spLine 1.2s ease .8s forwards; }
     @keyframes spUp { to { opacity:1; transform:translateY(0); } }
     @keyframes spLine { to { transform:scaleX(1); } }
-    @keyframes heartPop { 0%,100%{transform:scale(1)} 40%{transform:scale(1.45)} 70%{transform:scale(.9)} }
     @keyframes pillPop { 0%,100%{transform:scale(1)} 45%{transform:scale(1.18)} }
     .pri-btn:active { transform:scale(.93); }
 
@@ -636,14 +638,12 @@
   <!-- ── TOPBAR ── -->
   <header class="topbar">
     <div class="topbar-brand">
-      <div class="topbar-brand-accent"></div>
       <div class="topbar-brand-inner">
         <span class="logo">kuai</span>
-        <span class="tagline">Shopping Companion</span>
       </div>
     </div>
     <div class="topbar-center">
-      <span class="topbar-context">My Wishlist</span>
+      <span class="topbar-context">Shopping Companion</span>
     </div>
     <div class="topbar-right">
       <button class="theme-btn" id="themeToggle" title="Toggle dark/light mode" aria-label="Toggle theme">
@@ -715,7 +715,7 @@
         </div>
         <div class="action-row">
           <button class="action-btn" id="favBtn" aria-label="Toggle favorite">
-            <svg class="icon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg>
+            <svg class="icon" id="favIcon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg>
             <span id="favLabel">Favorite</span>
           </button>
           <button class="action-btn" id="purchasedBtn" aria-label="Toggle purchased">
@@ -1146,7 +1146,16 @@ function renderDetail() {
   });
 
   document.getElementById('favBtn').className = `action-btn${item.favorite ? ' active-fav' : ''}`;
-  document.getElementById('favLabel').textContent = item.favorite ? '♥ Favorited' : 'Favorite';
+  document.getElementById('favLabel').textContent = item.favorite ? 'Favorited' : 'Favorite';
+  // Filled heart when favorited, outline when not
+  const favIcon = document.getElementById('favIcon');
+  if (item.favorite) {
+    favIcon.setAttribute('fill', 'currentColor');
+    favIcon.setAttribute('stroke', 'currentColor');
+  } else {
+    favIcon.setAttribute('fill', 'none');
+    favIcon.setAttribute('stroke', 'currentColor');
+  }
   document.getElementById('purchasedBtn').className = `action-btn${item.purchased ? ' active-purchased' : ''}`;
   document.getElementById('purchasedLabel').textContent = item.purchased ? '✓ Purchased' : 'Mark Purchased';
 
@@ -1408,11 +1417,7 @@ window.addEventListener('resize', () => {
 });
 
 // ── MICRO-INTERACTIONS ─────────────────────────────────────────────────────
-document.getElementById('favBtn').addEventListener('click', function() {
-  this.style.animation = 'none'; void this.offsetWidth;
-  this.style.animation = 'heartPop .4s ease forwards';
-  var me = this; setTimeout(function() { me.style.animation = ''; }, 420);
-});
+// fav button uses CSS transition only — no JS animation needed
 
 var _prevCount = 0;
 function checkPillPop() { _prevCount = state.items.length; }
@@ -1431,12 +1436,16 @@ function animateDetailImg() {
 }
 
 function animateCards() {
-  document.querySelectorAll('.item-card').forEach(function(card, i) {
-    card.style.opacity = '0'; card.style.transform = 'translateX(-8px)'; card.style.transition = 'none';
-    setTimeout(function() {
-      card.style.transition = 'opacity .2s ease, transform .2s ease';
-      card.style.opacity = '1'; card.style.transform = 'translateX(0)';
-    }, i * 38);
+  // Subtle: just a quick opacity fade, no staggered slide
+  document.querySelectorAll('.item-card').forEach(function(card) {
+    card.style.transition = 'none';
+    card.style.opacity = '0';
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        card.style.transition = 'opacity .15s ease';
+        card.style.opacity = '1';
+      });
+    });
   });
 }
 
