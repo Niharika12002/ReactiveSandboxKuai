@@ -584,6 +584,46 @@
     /* ─── UTILITIES ──────────────────────────────────────────────────────── */
     .icon { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+    /* ─── BUDGET BAR ─────────────────────────────────────────────────────── */
+    .budget-bar-wrap {
+      padding: 10px 14px 12px;
+      border-bottom: 1px solid var(--border-lt);
+      display: none;
+    }
+    .budget-bar-wrap.visible { display: block; }
+    .budget-bar-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 7px;
+    }
+    .budget-bar-label {
+      font-size: 8.5px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .13em; color: var(--text-3);
+    }
+    .budget-totals { display: flex; align-items: baseline; gap: 5px; }
+    .budget-total-saved {
+      font-size: 16px; font-weight: 900; color: var(--text-1); letter-spacing: -.02em;
+    }
+    .budget-total-bought {
+      font-size: 10px; font-weight: 700; color: var(--sage-dk);
+    }
+    .budget-segments {
+      height: 5px; border-radius: 3px;
+      background: var(--bg-inset); overflow: hidden;
+      display: flex;
+    }
+    .budget-seg-high   { background: var(--rust);    height: 100%; transition: width .4s var(--ease-out); }
+    .budget-seg-medium { background: var(--gold);    height: 100%; transition: width .4s var(--ease-out); }
+    .budget-seg-low    { background: var(--sage);    height: 100%; transition: width .4s var(--ease-out); }
+    .budget-legend {
+      display: flex; gap: 10px; margin-top: 7px;
+    }
+    .budget-legend-item {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 9px; font-weight: 700; color: var(--text-3);
+    }
+    .budget-legend-dot { width: 6px; height: 6px; border-radius: 50%; }
+
   </style>
 </head>
 <body>
