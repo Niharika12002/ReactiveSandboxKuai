@@ -4,28 +4,28 @@
 
 **1. Can I defend this?**
 
-Yes. I can defend Kuai because its major decisions come from a clear product goal: reducing shopping overwhelm through a calm, structured system. The state architecture is especially defensible because the app is built around one shared parent state that connects the Browser, Detail View, and Controller. That decision supports Kuai's core behaviors — searching, adding items, selecting a saved item, editing product details, and filtering structured product data — without duplicating state across components. Every other decision, from the 25/55/20 panel proportions to the anti-retail palette, has the same kind of reasoning behind it. I can explain all of it.
+Yes. Every major decision has a reason behind it. The single shared state keeps all three panels in sync — that's not just an architectural choice, it's what makes the product feel connected. The 25/55/20 proportions exist because the Detail View is where decisions happen, so it earns the most space. The warm palette exists because Kuai is supposed to reduce stress, not drive urgency. The priority-coded cards exist because users should be able to scan the list and understand urgency without reading a single label. I can explain all of it.
 
 ---
 
 **2. Is this mine?**
 
-Yes. AI helped me structure, clarify, and expand the project, but the major product decisions came from my own direction and critique. I pushed Kuai beyond being just a wishlist, defined its calm and chic visual identity, strengthened the role of the Detail View, introduced the Lisa persona, prioritized accessibility, and moved the app toward becoming a smart data-driven shopping tool. When AI produced something that didn't match the vision — the alternate codebase, the passive detail panel, the retail-feeling colors — I pushed back and redirected. AI supported the process, but I directed what Kuai should become.
+Yes. AI built what I directed, but the product decisions are mine. I pushed Kuai beyond being a wishlist. I defined the visual identity. I corrected the panel proportions. I replaced the serif font when it was making Kuai feel like a magazine instead of a tool. I removed the custom item modal when it was technically complete but wrong for the product. I rejected the alternate codebase when it violated the architecture. The Record of Resistance documents sixteen moments where I redirected the work. AI executed. I decided.
 
 ---
 
 **3. Did I verify?**
 
-I designed Kuai so the three panels share one real parent state rather than pretending to stay in sync. The Browser, Detail View, and Controller are all meant to respond to the same source of truth, which is central to how the app works. At the same time, I recognized areas that still needed to be properly wired, such as the real-time search-to-add flow. That meant I did not just assume the architecture was correct — I used those gaps to check whether the interactions were genuinely connected through shared state rather than faking it.
+Yes, by actually using it. I caught six interaction failures through live testing that were invisible in the code — duplicate ticks, cards animating in bulk when only one changed, the purchased toggle defaulting to green despite the state being false. I also caught a localStorage bug where stale persisted data was overriding the intended default, and fixed it by bumping the storage key. I didn't just ship it. I used it.
 
 ---
 
 **4. Would I teach this?**
 
-Yes. Kuai gives me a clear example of how to explain props-down/events-up. The parent component owns the shared state and passes the relevant data down into the Browser, Detail View, and Controller through props. When a user searches, selects an item, edits notes, changes a category, or updates favorite and purchased status, those actions go back up through callbacks so the parent can update the state. That update then flows back down to all three panels at once. Kuai is a good example of how React components stay coordinated without each panel managing its own copy of the data.
+Yes. Kuai is a clean example of props-down/events-up. The parent owns the state. Each panel gets what it needs through props. Actions come back up through callbacks. Nothing is duplicated. I'd also use the Controller Panel to teach contextual UI — showing the right thing at the right moment is a higher standard than showing everything always. Both are ideas I understand well enough to explain clearly.
 
 ---
 
 **5. Is my documentation honest?**
 
-Yes. My documentation is honest because it shows that AI was used as a tool for framing, writing, structuring, and implementation — but not as a substitute for my design decisions. The AI Direction Log accurately describes how I used AI to shape Kuai, where I redirected the project, and how I changed the output when it did not yet match my standards. It reflects both what I asked AI to do and how I revised the work to better fit Kuai's product vision, system architecture, and design quality.
+Yes. The Direction Log shows how AI shaped the product. The Record of Resistance shows where I pushed back. This reflection doesn't overstate my role or understate AI's. AI was genuinely useful — it built the system, implemented the logic, wrote documentation drafts, and executed code patches throughout. But it did all of that under direction. The decisions about what Kuai should be and what it should refuse to become were mine.
