@@ -289,9 +289,9 @@
     .section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; color: var(--text-3); margin-bottom: 10px; }
 
     .price-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-    .price-card { flex: 1; min-width: 86px; background: var(--bg-panel); border: 1.5px solid var(--border); border-radius: var(--r-md); padding: 12px 14px; transition: border-color var(--duration), transform var(--duration), box-shadow var(--duration); }
-    .price-card:hover { border-color: var(--gold-mid); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
-    .price-card.best { border-color: var(--sage); background: var(--sage-lt); box-shadow: 0 0 0 1px var(--sage); }
+    .price-card { flex: 1; min-width: 86px; background: var(--bg-inset); border: 1px solid var(--border-lt); border-radius: var(--r-md); padding: 12px 14px; transition: border-color var(--duration); }
+    .price-card:hover { border-color: var(--border); }
+    .price-card.best { border: 1.5px solid var(--sage); background: var(--bg-inset); }
     .price-retailer { font-size: 10px; font-weight: 600; color: var(--text-3); margin-bottom: 4px; }
     .price-amount { font-size: 22px; font-weight: 900; color: var(--text-1); letter-spacing: -.02em; line-height: 1; }
     .price-card.best .price-amount { color: var(--sage-dk); }
@@ -719,7 +719,7 @@
             <span id="favLabel">Favorite</span>
           </button>
           <button class="action-btn" id="purchasedBtn" aria-label="Toggle purchased">
-            <svg class="icon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10l5 5 8-8"/></svg>
+            <svg class="icon" id="purchasedIcon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10l5 5 8-8"/></svg>
             <span id="purchasedLabel">Mark Purchased</span>
           </button>
         </div>
@@ -825,30 +825,8 @@
             </div>
             <div class="ctrl-toggle" id="ctrlPurchasedToggle" role="switch" aria-checked="true" tabindex="0">
               <span class="ctrl-toggle-label">Show purchased</span>
-              <div class="sw on" id="swPurchased"></div>
+              <div class="sw" id="swPurchased"></div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- STATE 2 & 3: Sort accordion -->
-      <div class="ctrl-sort-wrap" id="ctrlSortWrap">
-        <button class="ctrl-accordion-btn" id="sortAccordionBtn" aria-expanded="false">
-          <span class="ctrl-accordion-lhs">
-            <span class="ctrl-accordion-title">Sort</span>
-          </span>
-          <span class="ctrl-accordion-arrow" id="sortArrow">▼</span>
-        </button>
-        <div class="ctrl-sort-body" id="sortBody">
-          <div class="ctrl-sort-inner">
-            <select class="ctrl-select" id="ctrlSort" aria-label="Sort collection">
-              <option value="dateAddedNewest">Newest first</option>
-              <option value="dateAddedOldest">Oldest first</option>
-              <option value="priceLow">Price: low → high</option>
-              <option value="priceHigh">Price: high → low</option>
-              <option value="nameAZ">Name: A → Z</option>
-              <option value="priority">By priority</option>
-            </select>
           </div>
         </div>
       </div>
@@ -921,7 +899,6 @@ function saveState() {
       filterCat: state.filterCat,
       favOnly: state.favOnly,
       showPurchased: state.showPurchased,
-      sortBy: state.sortBy,
     }));
   } catch(e) {}
 }
@@ -943,8 +920,8 @@ let state = {
   search:        '',
   filterCat:     _p?.filterCat    ?? 'All',
   favOnly:       _p?.favOnly      ?? false,
-  showPurchased: _p?.showPurchased ?? true,
-  sortBy:        _p?.sortBy       ?? 'dateAddedNewest',
+  showPurchased: _p?.showPurchased ?? false,
+
   notesEditing:  false,
 };
 let searchTimer = null;
@@ -959,14 +936,7 @@ function visibleItems() {
 
   const po = { high: 0, medium: 1, low: 2 };
 
-  // Secondary sort (user-chosen, within each priority group)
-  if      (state.sortBy === 'dateAddedNewest') items.sort((a,b) => new Date(b.dateAdded)-new Date(a.dateAdded));
-  else if (state.sortBy === 'dateAddedOldest') items.sort((a,b) => new Date(a.dateAdded)-new Date(b.dateAdded));
-  else if (state.sortBy === 'priceLow')        items.sort((a,b) => a.price-b.price);
-  else if (state.sortBy === 'priceHigh')       items.sort((a,b) => b.price-a.price);
-  else if (state.sortBy === 'nameAZ')          items.sort((a,b) => a.name.localeCompare(b.name));
-
-  // Primary sort: always High → Medium → Low (stable, preserves secondary order within groups)
+  // Sort: always High → Medium → Low
   items.sort((a,b) => po[a.priority] - po[b.priority]);
 
   return items;
@@ -1008,6 +978,17 @@ function updateItem(id, updates) {
   state.items = state.items.map(i => i.id === id ? { ...i, ...updates } : i);
   saveState();
   render();
+  // Animate only the card that changed
+  requestAnimationFrame(function() {
+    var card = document.querySelector('.item-card[data-id="' + id + '"]');
+    if (!card) return;
+    card.style.transition = 'none';
+    card.style.opacity = '0.4';
+    requestAnimationFrame(function() {
+      card.style.transition = 'opacity .2s ease';
+      card.style.opacity = '1';
+    });
+  });
 }
 function removeItem(id) {
   const name = state.items.find(i => i.id === id)?.name || 'Item';
@@ -1157,7 +1138,7 @@ function renderDetail() {
     favIcon.setAttribute('stroke', 'currentColor');
   }
   document.getElementById('purchasedBtn').className = `action-btn${item.purchased ? ' active-purchased' : ''}`;
-  document.getElementById('purchasedLabel').textContent = item.purchased ? '✓ Purchased' : 'Mark Purchased';
+  document.getElementById('purchasedLabel').textContent = item.purchased ? 'Purchased' : 'Mark Purchased';
 
   const notesText = document.getElementById('notesText');
   const notesTA = document.getElementById('notesTextarea');
@@ -1190,8 +1171,6 @@ function renderController() {
 
   // Filter/sort accordions
   document.getElementById('ctrlFilterWrap').classList.toggle('visible', hasItems);
-  document.getElementById('ctrlSortWrap').classList.toggle('visible', hasItems);
-
   // Selected item section
   const hasSelected = !!item;
   document.getElementById('ctrlItemCard').classList.toggle('visible', hasSelected);
@@ -1260,7 +1239,7 @@ function initAccordion(btnId, bodyId, arrowId) {
   });
 }
 initAccordion('filterAccordionBtn', 'filterBody', 'filterArrow');
-initAccordion('sortAccordionBtn', 'sortBody', 'sortArrow');
+
 
 // ── EVENTS ─────────────────────────────────────────────────────────────────
 document.getElementById('searchInput').addEventListener('input', e => {
@@ -1323,7 +1302,6 @@ document.getElementById('notesCancel').addEventListener('click', () => {
 
 // Controller: filter + sort
 document.getElementById('ctrlCategory').addEventListener('change', e => { state.filterCat = e.target.value; render(); });
-document.getElementById('ctrlSort').addEventListener('change', e => { state.sortBy = e.target.value; renderBrowser(); });
 document.getElementById('ctrlFavToggle').addEventListener('click', () => {
   state.favOnly = !state.favOnly;
   document.getElementById('swFav').classList.toggle('on', state.favOnly);
@@ -1376,10 +1354,7 @@ document.getElementById('swFav').classList.toggle('on', state.favOnly);
 document.getElementById('ctrlFavToggle').setAttribute('aria-checked', String(state.favOnly));
 document.getElementById('swPurchased').classList.toggle('on', state.showPurchased);
 document.getElementById('ctrlPurchasedToggle').setAttribute('aria-checked', String(state.showPurchased));
-if (state.sortBy) {
-  const sortEl = document.getElementById('ctrlSort');
-  if (sortEl) sortEl.value = state.sortBy;
-}
+// purchased toggle default is off — only show purchased items if user explicitly enables it
 
 render();
 
@@ -1460,7 +1435,7 @@ document.getElementById('notesSave').addEventListener('click', function() {
 
 (function() {
   var _base = render;
-  render = function() { _base(); checkPillPop(); animateDetailImg(); setTimeout(animateCards, 16); };
+  render = function() { _base(); checkPillPop(); animateDetailImg(); };
 })();
 
 // ── SPLASH ─────────────────────────────────────────────────────────────────
