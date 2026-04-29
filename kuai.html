@@ -291,10 +291,10 @@
     .price-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
     .price-card { flex: 1; min-width: 86px; background: var(--bg-inset); border: 1px solid var(--border-lt); border-radius: var(--r-md); padding: 12px 14px; transition: border-color var(--duration); }
     .price-card:hover { border-color: var(--border); }
-    .price-card.best { border: 1.5px solid var(--sage); background: var(--bg-inset); }
+    .price-card.best { border: 1px solid var(--border-lt); background: var(--bg-inset); }
     .price-retailer { font-size: 10px; font-weight: 600; color: var(--text-3); margin-bottom: 4px; }
     .price-amount { font-size: 22px; font-weight: 900; color: var(--text-1); letter-spacing: -.02em; line-height: 1; }
-    .price-card.best .price-amount { color: var(--sage-dk); }
+    .price-card.best .price-amount { color: var(--sage-dk); font-weight: 900; }
     .price-best-tag { font-size: 9px; font-weight: 800; color: var(--sage-dk); text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; }
     .price-savings-banner { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--sage-lt); border: 1px solid var(--sage); border-radius: var(--r-sm); margin-bottom: 24px; }
     .price-savings-text { font-size: 12px; font-weight: 700; color: var(--sage-dk); }
@@ -823,7 +823,7 @@
               <span class="ctrl-toggle-label">Favorites only</span>
               <div class="sw" id="swFav"></div>
             </div>
-            <div class="ctrl-toggle" id="ctrlPurchasedToggle" role="switch" aria-checked="true" tabindex="0">
+            <div class="ctrl-toggle" id="ctrlPurchasedToggle" role="switch" aria-checked="false" tabindex="0">
               <span class="ctrl-toggle-label">Show purchased</span>
               <div class="sw" id="swPurchased"></div>
             </div>
@@ -889,7 +889,7 @@ const CATS = ['Tech','Beauty','Clothing','Home','Toys','Other'];
 
 // ── STATE ──────────────────────────────────────────────────────────────────
 // ── PERSISTENCE ────────────────────────────────────────────────────────────
-const STORAGE_KEY = 'kuai-v1';
+const STORAGE_KEY = 'kuai-v2';
 
 function saveState() {
   try {
@@ -920,7 +920,7 @@ let state = {
   search:        '',
   filterCat:     _p?.filterCat    ?? 'All',
   favOnly:       _p?.favOnly      ?? false,
-  showPurchased: _p?.showPurchased ?? false,
+  showPurchased: false, /* always off on load — user opts in */
 
   notesEditing:  false,
 };
