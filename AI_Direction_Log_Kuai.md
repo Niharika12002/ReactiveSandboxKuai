@@ -567,6 +567,218 @@ An onboarding flow (3 slides between splash and app) was attempted multiple time
 
 ---
 
+### Entry 29 — Controller Panel Redesign: Contextual Progressive Disclosure
+
+**Prompt direction given:**
+The Controller Panel was identified as visually confusing — it showed all controls at all times regardless of context, making the panel feel like a static control dump. Directed AI to redesign it so it responds to what the user is actually doing.
+
+**AI's design thinking:**
+Diagnosed the panel as having no state awareness. Proposed a three-state model driven by user context rather than a static layout:
+
+- **State 1 (no items):** Minimal centered prompt only. No controls, no clutter.
+- **State 2 (items exist, nothing selected):** Stats strip + collapsed Filter and Sort accordions. Accordions closed by default — a gold dot indicator appears when a filter is active so the user knows without opening it.
+- **State 3 (item selected):** Stats strip + selected item card in gold + priority chips + remove button. Filter/Sort still accessible below.
+
+**What was built:**
+- Stats strip moved to a compact 4-column row
+- Filter and Sort rebuilt as accordion components with smooth max-height CSS transitions
+- Priority control moved from a dropdown in Controller to inline chips — matching the Detail View's pill buttons for consistency
+- Item name/brand displayed in a gold-bordered card to make context explicit
+- Active filter dot indicator — shows without requiring the accordion to be open
+
+**What I directed specifically:**
+The category and priority dropdowns that existed in the old "Selected Item" section were removed. Priority is now the chips in the Controller. Category editing remains on the image badge in the Detail View. This eliminated duplication and simplified the panel.
+
+**What changed:**
+The Controller went from a panel that overwhelmed with options to one that surfaces only what is relevant to the user's current action. This was the most significant UX restructuring of Phase 2.
+
+---
+
+### Entry 30 — Topbar Redesign and Removal of the Saved Items Pill
+
+**Prompt direction given:**
+Three specific changes: remove the "1 saved" count pill from the topbar, redesign the topbar to feel like a real product, and replace "My Wishlist" with "Shopping Companion" in the center.
+
+**AI's design rationale:**
+The count pill was diagnosed as redundant — the same information already lived in the Controller's stats strip and the Browser's list header. Two sources of truth for the same number is one too many.
+
+For the topbar redesign, the design was organized into three intentional zones:
+- **Left** — "kuai" wordmark only, clean and undecorated
+- **Center** — "Shopping Companion" as a quiet context label
+- **Right** — Theme toggle redesigned as a text+icon pill ("☀ Light" / "☾ Dark") rather than an arbitrary circle button
+
+**What was removed:**
+The gold accent bar, the brand divider, the tagline below the logo, and the saved count pill. All were identified as decorative chrome adding noise without adding signal.
+
+**What changed:**
+The topbar became cleaner and more intentional. The brand presence is the wordmark alone. The center label tells users what product they're using without competing with the logo.
+
+---
+
+### Entry 31 — Priority-Coded Product Cards and Permanent Priority Sorting
+
+**Prompt direction given:**
+Two connected requests: change the entire product card color to reflect its priority so users can visually scan by urgency, and sort the My Collection panel with High priority always at the top and Low at the bottom.
+
+**AI's initial approach (Record of Resistance #3):**
+The first attempt used a 3px left border accent — a subtle signal. The designer rejected this immediately: the color was too hard to read and the cards looked bad. Directed AI to fill the entire card.
+
+**What was rebuilt:**
+- Full card tint using the existing `--rust-lt`, `--gold-lt`, `--sage-lt` light tokens — strong enough to scan immediately, never garish
+- Price text color shifts to match priority: rust for High, gold-dark for Medium, sage-dark for Low — so nothing fights on the tinted background
+- Selected state deepens to a solid colored border + ring shadow in the matching priority color
+- Priority badge inside the card simplified — since the card already communicates priority, the badge was removed to reduce clutter; only purchased state (✓) is shown
+
+**Priority sorting logic:**
+High → Medium → Low is now the primary, permanent sort applied to `visibleItems()`. It is always on. The previous "By priority" sort option was removed from the Sort dropdown as it had become redundant.
+
+**Priority group dividers added:**
+Each priority group in the collection list gets a small colored dot + label header ("High Priority · 2") so the separation is explicit, not just implied by color.
+
+**What changed:**
+The Browser panel transformed from a flat list into a visually organized, urgency-coded collection. A user can scan 10 items and read the priority distribution without reading a single word.
+
+---
+
+### Entry 32 — Product Feature Audit: What Was Missing for a Published Website
+
+**Prompt direction given:**
+Asked AI to evaluate Kuai as an actual product that would be published — not just a course project — and identify what was fundamentally missing.
+
+**What AI identified (in priority order):**
+
+| Priority | Missing Feature | Reason |
+|---|---|---|
+| 🔴 Critical | Data persistence (localStorage) | Close the tab, lose everything |
+| 🔴 Critical | Onboarding / first-run experience | New users land on an empty screen with no context |
+| 🟠 Important | Budget tracking | No total cost visibility defeats the financial utility |
+| 🟠 Important | Item sharing / export | Users can't share wishlists with partners or family |
+| 🟠 Important | List-level organization | Users think in named lists, not one flat pile |
+| 🟡 Expected | About / landing page | No explanation of what Kuai is for visitors |
+| 🟡 Expected | Legal pages | Privacy policy + terms required for any published product |
+| 🟡 Expected | Feedback / contact mechanism | No way to report bugs or reach the team |
+| 🟡 Expected | Keyboard navigation & accessibility | Incomplete WCAG compliance |
+| 🟢 Elevating | Price drop alerts | Fulfills the "Compare it" promise of the tagline |
+
+**What was agreed:**
+A build order was established: localStorage → budget tracking → onboarding → share/export. This entry formalized a product roadmap for Phase 2 completion.
+
+---
+
+### Entry 33 — localStorage Persistence
+
+**Prompt direction given:**
+Implement data persistence so the collection survives page refreshes and tab closes.
+
+**What was built:**
+- `saveState()` — serializes items, selectedId, filterCat, favOnly, showPurchased to `localStorage` under key `kuai-v1` (later bumped to `kuai-v2`)
+- `loadState()` — safely deserializes on boot with a validity check (`Array.isArray(s.items)`) and silent failure if storage is unavailable or corrupted
+- Every mutation (`addItem`, `updateItem`, `removeItem`) calls `saveState()` before `render()`
+- Boot sync — filter dropdowns, sort select, and toggle switches are all synced to persisted values before first render so the UI never contradicts state
+
+**Technical note on storage key versioning:**
+The storage key was later bumped from `kuai-v1` to `kuai-v2` when a persistent bug was discovered — the old key had `showPurchased: true` saved from a previous session. Because `_p?.showPurchased ?? false` only falls back to `false` when the value is `null` or `undefined` (not when it's explicitly `true`), the stale value kept winning. Bumping the key clears all legacy stored state and forces a clean session.
+
+**What changed:**
+Kuai became a real product. Items, filters, selections, and preferences now survive across sessions. This was the single highest-impact change made in Phase 2.
+
+---
+
+### Entry 34 — Budget Bar
+
+**Prompt direction given:**
+Add a wishlist value tracker to make the financial dimension of the collection visible at a glance.
+
+**What was built:**
+A segmented budget bar in the Controller Panel, visible only when items exist:
+- Total wishlist value displayed as a large number
+- Segmented bar: rust for High priority unpurchased items, gold for Medium, sage for Low
+- Purchased total shown separately as a secondary label ("$X bought")
+- Color legend below the bar
+- All segments animate width on update using CSS transitions
+
+**Debug note — Record of Resistance #4:**
+The budget bar CSS was accidentally stripped during a previous patch session when the modal removal and budget injection shared the same code block. The bar rendered as unstyled text in the bottom-right corner of the screen. The root cause was identified: `budget-bar-wrap` had no `display: none` rule in the stylesheet because the CSS never made it into the `<style>` block. Fixed by injecting the full CSS block before the closing `</style>` tag.
+
+**What changed:**
+Users can now see the total cost of their wishlist segmented by priority — giving immediate financial clarity and reinforcing the "decide when to buy" promise of Kuai's value proposition.
+
+---
+
+### Entry 35 — Removal of Custom Item Addition Feature
+
+**Prompt direction given:**
+After the custom item modal was built (allowing users to add items outside the catalog), the designer reviewed it and rejected it.
+
+**Designer's reasoning:**
+The catalog search already handles item addition cleanly — that is the designed interaction. A separate "Add item" button creates two paths to the same action and breaks the intentional flow Kuai was built around.
+
+**What AI did:**
+Accepted the direction immediately. Removed the modal HTML, CSS, JS event listeners, the button from the browser header, and all related utility functions. Verified zero remaining references in the file.
+
+**Why this matters:**
+This is a clean example of the designer holding the product vision against scope creep. The feature was technically complete and functional. It was removed not because it was broken but because it contradicted the product's interaction logic. AI executed the removal without pushback.
+
+---
+
+### Entry 36 — Interaction Polish: Six Targeted Fixes
+
+**Prompt direction given:**
+A set of six specific interaction problems identified through live testing:
+
+1. All cards animate on any change — should only animate the card being changed
+2. Purchased button shows two ticks when active
+3. Price cards in Detail View look selected (visual confusion with active states)
+4. Show Purchased toggle defaults to green/on — should default to off
+5. Sort filter has no meaningful use — remove it entirely
+6. Favorite button shows two overlapping hearts when active
+
+**What was fixed:**
+
+**Card animation:** `animateCards()` removed from the global `render()` wrapper entirely. Animation now only fires inside `updateItem()`, targeting the single card matching the changed item's `data-id`. All other cards remain still.
+
+**Purchased double tick:** The label was `'✓ Purchased'` while the SVG checkmark was simultaneously rendering — two ticks. Label changed to `'Purchased'`, one SVG tick remains.
+
+**Price cards:** Removed the sage green fill and box-shadow ring from `.price-card.best`. Best price is now indicated only by sage-colored amount text and the "✓ Best price" label. No selected-state confusion.
+
+**Show Purchased toggle:** Default changed from `true` to `false` in state initialization. The `aria-checked="true"` hardcoded in HTML was also corrected to `false`. Storage key bumped to `kuai-v2` to clear any stale persisted `true` values.
+
+**Sort removal:** `ctrlSort` select, `ctrl-sort-wrap` CSS, sort accordion HTML, `sortBy` state field, `saveState` reference, `visibleItems` sort logic, `initAccordion` call — all fully purged. Zero references remain.
+
+**Heart fill:** `renderDetail` now sets `fill="currentColor"` on the heart SVG when favorited and `fill="none"` when not. The double-heart was caused by the SVG having both stroke and fill active simultaneously — toggling fill on/off resolved it.
+
+**What changed:**
+The interface became substantially more precise. Each interaction now produces exactly the feedback it should — no more, no less.
+
+---
+
+### Entry 37 — Retailer Links: Clickable Price Cards
+
+**Prompt direction given:**
+Users should be able to click any retailer card in the Detail View and go directly to that product on the retailer's website. Links provided for 5 products: Sony WH-1000XM5, Le Labo Santal 33, Patagonia Nano Puff, LEGO Wildflower Bouquet, Kindle Paperwhite 16GB.
+
+**Prices were also verified and updated:**
+Before wiring in links, current prices were checked against live search results. Several had changed since the catalog was originally built:
+
+| Product | Change |
+|---|---|
+| Sony WH-1000XM5 | Amazon dropped from $369 → $248; Best Buy from $379 → $298 |
+| Patagonia Nano Puff | Prices confirmed current |
+| Kindle Paperwhite 16GB | Updated to 2024 model: Amazon $139, Best Buy $149; Target added as third retailer |
+| Le Labo Santal 33 | Unchanged at $220 |
+| LEGO Wildflower Bouquet | Unchanged |
+
+**What was built:**
+- A `url` field was added to the `priceComparison` array for each retailer entry
+- `renderDetail` now conditionally renders price cards as `<a>` tags (when a URL exists) or `<div>` tags (when no URL) — no broken links for the 15 products without URLs
+- Linked cards open in a new tab with `rel="noopener noreferrer"`
+- CSS updated: linked cards lift subtly on hover (`translateY(-2px)` + shadow) to signal they're clickable; unlinked cards have no hover lift
+
+**What changed:**
+Kuai's price comparison became actionable. Users can now go directly from seeing the best price to buying it — fulfilling the core "Buy it right" promise of the product tagline.
+
+---
+
 ## Updated Summary
 
 | Phase | AI Tool | AI Used For | Human Directed |
@@ -587,6 +799,15 @@ An onboarding flow (3 slides between splash and app) was attempted multiple time
 | Responsive design | Claude | Three-breakpoint layout system, mobile nav, tablet FAB | Breakpoint decisions, TV presentation requirement |
 | Deployment | Claude | GitHub Pages setup, Railway debugging, architecture simplification | Platform choice, simplification decision |
 | Splash + micro | Claude | Splash animation, micro-interaction system | Timing, which interactions to include, onboarding removal |
+| Controller redesign | Claude | Three-state contextual panel, accordion filters, priority chips | State model, which controls to surface when |
+| Topbar redesign | Claude | Three-zone layout, removal of pill, theme toggle redesign | Brand direction, copy, what to remove |
+| Priority cards | Claude | Full card color fill, group dividers, sort logic | Color approach (rejected left border), fill decision |
+| Product audit | Claude | Missing features analysis, build order recommendation | Which features to build, which to defer |
+| localStorage | Claude | Persistence layer, boot sync, storage key versioning | Feature scope, key versioning decision |
+| Budget bar | Claude | Segmented value bar, CSS animation, debug and fix | Feature design, what to display |
+| Feature removal | Claude | Custom item modal — full removal | Decision to remove, rationale |
+| Interaction polish | Claude | Six targeted fixes across animation, toggles, icons | Which bugs mattered, fix direction |
+| Retailer links | Claude | Clickable price cards, URL field in catalog, conditional rendering | Link sourcing, price verification |
 | Documentation | Claude | AI Direction Log updates | All content, framing, decisions about what to include |
 
 ---
