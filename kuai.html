@@ -289,8 +289,17 @@
     .section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; color: var(--text-3); margin-bottom: 10px; }
 
     .price-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-    .price-card { flex: 1; min-width: 86px; background: var(--bg-inset); border: 1px solid var(--border-lt); border-radius: var(--r-md); padding: 12px 14px; transition: border-color var(--duration); }
-    .price-card:hover { border-color: var(--border); }
+    .price-card {
+      flex: 1; min-width: 86px; background: var(--bg-inset);
+      border: 1px solid var(--border-lt); border-radius: var(--r-md);
+      padding: 12px 14px; transition: border-color var(--duration), transform var(--duration), box-shadow var(--duration);
+      text-decoration: none; display: block; color: inherit;
+    }
+    .price-card[href]:hover {
+      border-color: var(--gold-mid); transform: translateY(-2px);
+      box-shadow: var(--shadow-sm); cursor: pointer;
+    }
+    .price-card:not([href]):hover { border-color: var(--border); }
     .price-card.best { border: 1px solid var(--border-lt); background: var(--bg-inset); }
     .price-retailer { font-size: 10px; font-weight: 600; color: var(--text-3); margin-bottom: 4px; }
     .price-amount { font-size: 22px; font-weight: 900; color: var(--text-1); letter-spacing: -.02em; line-height: 1; }
@@ -864,11 +873,11 @@
 <script>
 // ── CATALOG DATA ───────────────────────────────────────────────────────────
 const CATALOG = [
-  {id:'c1',title:'Sony WH-1000XM5 Headphones',brand:'Sony',category:'Tech',image:'https://raw.githubusercontent.com/Niharika12002/ReactiveSandboxKuai/main/WH-1000XM5%20Headphones.png',price:369,priceComparison:[{retailer:'Sony',price:399},{retailer:'Best Buy',price:379},{retailer:'Amazon',price:369}]},
-  {id:'c2',title:'Le Labo Santal 33 Perfume',brand:'Le Labo',category:'Beauty',image:'https://raw.githubusercontent.com/Niharika12002/ReactiveSandboxKuai/main/Le%20Labo%20Santal%2033%20Perfume.png',price:220,priceComparison:[{retailer:'Le Labo',price:220},{retailer:'Nordstrom',price:220}]},
-  {id:'c3',title:'Patagonia Nano Puff Jacket',brand:'Patagonia',category:'Clothing',image:'https://raw.githubusercontent.com/Niharika12002/ReactiveSandboxKuai/main/Patagonia%20Nano%20Puff%20Jacket.png',price:199,priceComparison:[{retailer:'Patagonia',price:229},{retailer:'REI',price:215},{retailer:'Backcountry',price:199}]},
-  {id:'c4',title:'LEGO Wildflower Bouquet',brand:'LEGO',category:'Toys',image:'https://raw.githubusercontent.com/Niharika12002/ReactiveSandboxKuai/main/LEGO%20Wildflower%20Bouquet.png',price:52,priceComparison:[{retailer:'LEGO',price:59},{retailer:'Target',price:55},{retailer:'Amazon',price:52}]},
-  {id:'c5',title:'Kindle Paperwhite 16GB',brand:'Amazon',category:'Tech',image:'https://raw.githubusercontent.com/Niharika12002/ReactiveSandboxKuai/main/Kindle%20Paperwhite%2016GB.png',price:159,priceComparison:[{retailer:'Amazon',price:159},{retailer:'Best Buy',price:169}]},
+  {id:'c1',title:'Sony WH-1000XM5 Headphones',brand:'Sony',category:'Tech',image:'https://raw.githubusercontent.com/Niharika12002/ReactiveSandboxKuai/main/WH-1000XM5%20Headphones.png',price:248,priceComparison:[{retailer:'Sony',price:399,url:'https://electronics.sony.com/audio/headphones/headband/p/wh1000xm5-s'},{retailer:'Best Buy',price:298,url:'https://www.bestbuy.com/product/sony-wh-1000xm5-wireless-noise-cancelling-over-the-ear-headphones-silver/J7XSRH5CXV/sku/6505728'},{retailer:'Amazon',price:248,url:'https://www.amazon.com/Sony-WH-1000XM5-Canceling-Headphones-Hands-Free/dp/B09XS7JWHH'}]},
+  {id:'c2',title:'Le Labo Santal 33 Perfume',brand:'Le Labo',category:'Beauty',image:'https://raw.githubusercontent.com/Niharika12002/ReactiveSandboxKuai/main/Le%20Labo%20Santal%2033%20Perfume.png',price:220,priceComparison:[{retailer:'Le Labo',price:220,url:'https://www.lelabofragrances.com/santal-33-147.html'},{retailer:'Nordstrom',price:220,url:'https://www.nordstrom.com/s/le-labo-santal-33-eau-de-parfum/4335764'}]},
+  {id:'c3',title:'Patagonia Nano Puff Jacket',brand:'Patagonia',category:'Clothing',image:'https://raw.githubusercontent.com/Niharika12002/ReactiveSandboxKuai/main/Patagonia%20Nano%20Puff%20Jacket.png',price:229,priceComparison:[{retailer:'Patagonia',price:229,url:'https://www.patagonia.com/product/womens-nano-puff-insulated-jacket/198077401117.html'},{retailer:'REI',price:215,url:'https://www.rei.com/product/249057/patagonia-nano-puff-insulated-jacket-womens'},{retailer:'Backcountry',price:199,url:'https://www.backcountry.com/b/patagonia-nano-puff-jacket-womens'}]},
+  {id:'c4',title:'LEGO Wildflower Bouquet',brand:'LEGO',category:'Toys',image:'https://raw.githubusercontent.com/Niharika12002/ReactiveSandboxKuai/main/LEGO%20Wildflower%20Bouquet.png',price:52,priceComparison:[{retailer:'LEGO',price:59,url:'https://www.lego.com/en-us/product/wildflower-bouquet-10313'},{retailer:'Target',price:55,url:'https://www.target.com/p/lego-icons-wildflower-bouquet-artificial-flowers-10313/-/A-86216138'},{retailer:'Amazon',price:52,url:'https://www.amazon.com/LEGO-Wildflower-Artificial-Anniversary-Collection/dp/B0BGQL5B3Q'}]},
+  {id:'c5',title:'Kindle Paperwhite 16GB',brand:'Amazon',category:'Tech',image:'https://raw.githubusercontent.com/Niharika12002/ReactiveSandboxKuai/main/Kindle%20Paperwhite%2016GB.png',price:139,priceComparison:[{retailer:'Amazon',price:139,url:'https://www.amazon.com/All-new-Amazon-Kindle-Paperwhite-glare-free/dp/B0CFPJYX7P'},{retailer:'Best Buy',price:149,url:'https://www.bestbuy.com/product/amazon-kindle-paperwhite-16-gb-2024-black/J39HW6QL86'},{retailer:'Target',price:139,url:'https://www.target.com/p/amazon-kindle-paperwhite-2024-black/-/A-91563138'}]},
   {id:'c6',title:'Aesop Hand Rinse',brand:'Aesop',category:'Beauty',image:'https://raw.githubusercontent.com/Niharika12002/ReactiveSandboxKuai/main/Aesop%20Hand%20Rinse%20_%20Hand%20Wash.png',price:38,priceComparison:[{retailer:'Aesop',price:38},{retailer:'Nordstrom',price:38}]},
   {id:'c7',title:'Allbirds Tree Runners',brand:'Allbirds',category:'Clothing',image:'https://raw.githubusercontent.com/Niharika12002/ReactiveSandboxKuai/main/Allbirds%20Tree%20Runners.png',price:99,priceComparison:[{retailer:'Allbirds',price:110},{retailer:'Amazon',price:99}]},
   {id:'c8',title:'Dyson V15 Detect Vacuum',brand:'Dyson',category:'Home',image:'https://raw.githubusercontent.com/Niharika12002/ReactiveSandboxKuai/main/Dyson%20V15%20Detect%20Vacuum.png',price:699,priceComparison:[{retailer:'Dyson',price:749},{retailer:'Best Buy',price:699},{retailer:'Target',price:719}]},
@@ -1109,12 +1118,15 @@ function renderDetail() {
   const lp = lowestPrice(item);
   const hp = Math.max(...item.priceComparison.map(p => p.price));
   const best = bestRetailer(item);
-  document.getElementById('priceRow').innerHTML = item.priceComparison.map(p =>
-    `<div class="price-card ${p.price===lp?'best':''}">
+  document.getElementById('priceRow').innerHTML = item.priceComparison.map(p => {
+    const tag   = p.url ? 'a' : 'div';
+    const attrs = p.url ? `href="${p.url}" target="_blank" rel="noopener noreferrer"` : '';
+    return `<${tag} class="price-card ${p.price===lp?'best':''}" ${attrs}>
       <div class="price-retailer">${p.retailer}</div>
       <div class="price-amount">$${p.price}</div>
       ${p.price===lp ? '<div class="price-best-tag">✓ Best price</div>' : ''}
-    </div>`).join('');
+    </${tag}>`;
+  }).join('');
 
   const savingsWrap = document.getElementById('priceSavingsWrap');
   const diff = hp - lp;
