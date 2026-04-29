@@ -237,6 +237,135 @@
     .badge-low    { background: rgba(90,136,104,.15); color: var(--sage-dk); }
     .badge-done   { background: rgba(90,136,104,.15); color: var(--sage-dk); }
 
+    /* ─── CUSTOM ITEM MODAL ─────────────────────────────────────────────── */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(28,24,20,.52);
+      z-index: 8000; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .22s var(--ease);
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--bg-panel); border-radius: var(--r-lg);
+      width: min(480px, calc(100vw - 32px));
+      box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+      transform: translateY(12px) scale(.98);
+      transition: transform .24s var(--ease-out);
+      overflow: hidden;
+    }
+    .modal-backdrop.open .modal { transform: translateY(0) scale(1); }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border-lt);
+    }
+    .modal-title { font-size: 15px; font-weight: 900; color: var(--text-1); letter-spacing: -.02em; }
+    .modal-close {
+      width: 28px; height: 28px; border-radius: var(--r-xs);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); font-size: 16px;
+      transition: background var(--duration), color var(--duration);
+    }
+    .modal-close:hover { background: var(--bg-inset); color: var(--text-1); }
+    .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .modal-row { display: flex; gap: 10px; }
+    .modal-field { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+    .modal-label {
+      font-size: 9px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .14em; color: var(--text-3);
+    }
+    .modal-input {
+      height: 36px; padding: 0 11px;
+      background: var(--bg-inset); border: 1.5px solid var(--border);
+      border-radius: var(--r-sm); font-size: 13px; font-weight: 500;
+      color: var(--text-1); outline: none;
+      transition: border-color var(--duration), box-shadow var(--duration);
+    }
+    .modal-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(181,144,74,.1); }
+    .modal-input::placeholder { color: var(--text-4); }
+    .modal-select {
+      height: 36px; padding: 0 11px;
+      background: var(--bg-inset); border: 1.5px solid var(--border);
+      border-radius: var(--r-sm); font-size: 13px; font-weight: 500;
+      color: var(--text-1); outline: none; -webkit-appearance: none; cursor: pointer;
+      transition: border-color var(--duration);
+    }
+    .modal-select:focus { border-color: var(--gold); }
+    .modal-footer {
+      display: flex; gap: 8px; justify-content: flex-end;
+      padding: 14px 20px; border-top: 1px solid var(--border-lt);
+    }
+    .modal-btn-cancel {
+      padding: 9px 18px; border: 1.5px solid var(--border);
+      border-radius: var(--r-sm); font-size: 12px; font-weight: 700;
+      color: var(--text-3); transition: all var(--duration);
+    }
+    .modal-btn-cancel:hover { border-color: var(--text-3); color: var(--text-2); }
+    .modal-btn-add {
+      padding: 9px 22px; background: var(--gold); color: #fff;
+      border-radius: var(--r-sm); font-size: 12px; font-weight: 800;
+      letter-spacing: .04em; transition: background var(--duration), transform var(--duration);
+      box-shadow: var(--shadow-sm);
+    }
+    .modal-btn-add:hover { background: var(--gold-dk); transform: translateY(-1px); }
+    .modal-btn-add:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    .modal-error {
+      font-size: 11px; color: var(--rust); font-weight: 600;
+      padding: 0 20px 12px; margin-top: -8px; display: none;
+    }
+    .modal-error.show { display: block; }
+
+    /* Budget bar */
+    .budget-bar-wrap {
+      padding: 10px 14px 12px; border-bottom: 1px solid var(--border-lt);
+      display: none;
+    }
+    .budget-bar-wrap.visible { display: block; }
+    .budget-bar-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 7px;
+    }
+    .budget-bar-label {
+      font-size: 8.5px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .13em; color: var(--text-3);
+    }
+    .budget-totals { display: flex; align-items: baseline; gap: 4px; }
+    .budget-total-saved { font-size: 16px; font-weight: 900; color: var(--text-1); letter-spacing: -.02em; }
+    .budget-total-bought { font-size: 11px; font-weight: 700; color: var(--sage-dk); }
+    .budget-segments {
+      height: 5px; border-radius: 3px;
+      background: var(--bg-inset); overflow: hidden;
+      display: flex; gap: 2px;
+    }
+    .budget-seg-high   { background: var(--rust);  height: 100%; border-radius: 3px; transition: width .4s var(--ease-out); }
+    .budget-seg-medium { background: var(--gold);  height: 100%; border-radius: 3px; transition: width .4s var(--ease-out); }
+    .budget-seg-low    { background: var(--sage);  height: 100%; border-radius: 3px; transition: width .4s var(--ease-out); }
+    .budget-seg-bought { background: var(--sage-dk); height: 100%; border-radius: 3px; transition: width .4s var(--ease-out); }
+    .budget-legend {
+      display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap;
+    }
+    .budget-legend-item {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 9px; font-weight: 700; color: var(--text-3);
+    }
+    .budget-legend-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+    }
+
+    /* Add item button in browser header */
+    .add-custom-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 10px; background: var(--gold); color: #fff;
+      border-radius: var(--r-sm); font-size: 11px; font-weight: 800;
+      letter-spacing: .04em; transition: background var(--duration), transform var(--duration);
+      box-shadow: var(--shadow-xs); flex-shrink: 0;
+    }
+    .add-custom-btn:hover { background: var(--gold-dk); transform: translateY(-1px); }
+    .browser-header-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
     .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 24px 20px; text-align: center; }
     .empty-icon { font-size: 26px; opacity: .2; margin-bottom: 2px; }
     .empty-title { font-size: 14px; font-weight: 800; color: var(--text-2); letter-spacing: -.01em; }
@@ -618,7 +747,10 @@
     <!-- ── BROWSER PANEL ── -->
     <aside class="panel browser-panel active" id="panelBrowser">
       <div class="browser-header">
-        <div class="browser-title">My Collection</div>
+        <div class="browser-header-row">
+          <div class="browser-title">My Collection</div>
+          <button class="add-custom-btn" id="addCustomBtn">＋ Add item</button>
+        </div>
         <div class="search-wrap">
           <span class="icon search-icon" aria-hidden="true">
             <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="9" r="6"/><path d="M15 15l3 3"/></svg>
@@ -715,6 +847,27 @@
           <div class="stat"><div class="stat-n" id="statFav">0</div><div class="stat-l">Favs</div></div>
           <div class="stat"><div class="stat-n" id="statPri">0</div><div class="stat-l">Priority</div></div>
           <div class="stat"><div class="stat-n" id="statBought">0</div><div class="stat-l">Bought</div></div>
+        </div>
+      </div>
+
+      <!-- Budget bar — visible when items exist -->
+      <div class="budget-bar-wrap" id="budgetBarWrap">
+        <div class="budget-bar-header">
+          <span class="budget-bar-label">Wishlist Value</span>
+          <div class="budget-totals">
+            <span class="budget-total-saved" id="budgetTotal">$0</span>
+            <span class="budget-total-bought" id="budgetBought"></span>
+          </div>
+        </div>
+        <div class="budget-segments" id="budgetSegments">
+          <div class="budget-seg-high"   id="budgetSegHigh"   style="width:0"></div>
+          <div class="budget-seg-medium" id="budgetSegMedium" style="width:0"></div>
+          <div class="budget-seg-low"    id="budgetSegLow"    style="width:0"></div>
+        </div>
+        <div class="budget-legend">
+          <div class="budget-legend-item"><div class="budget-legend-dot" style="background:var(--rust)"></div>High</div>
+          <div class="budget-legend-item"><div class="budget-legend-dot" style="background:var(--gold)"></div>Medium</div>
+          <div class="budget-legend-item"><div class="budget-legend-dot" style="background:var(--sage)"></div>Low</div>
         </div>
       </div>
 
@@ -816,6 +969,60 @@
     </button>
   </nav>
 </div>
+
+<!-- ── CUSTOM ITEM MODAL ── -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Add a custom item</div>
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-field">
+        <label class="modal-label" for="customName">Item name *</label>
+        <input class="modal-input" id="customName" type="text" placeholder="e.g. Vintage Levi's Jacket" maxlength="80"/>
+      </div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label class="modal-label" for="customBrand">Brand</label>
+          <input class="modal-input" id="customBrand" type="text" placeholder="e.g. Levi's" maxlength="40"/>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="customPrice">Price ($)</label>
+          <input class="modal-input" id="customPrice" type="number" placeholder="0.00" min="0" step="0.01"/>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label class="modal-label" for="customCat">Category</label>
+          <select class="modal-select" id="customCat">
+            <option>Tech</option><option>Beauty</option>
+            <option selected>Clothing</option><option>Home</option>
+            <option>Toys</option><option>Other</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="customPriority">Priority</label>
+          <select class="modal-select" id="customPriority">
+            <option value="high">High</option>
+            <option value="medium" selected>Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label" for="customUrl">Product URL (optional)</label>
+        <input class="modal-input" id="customUrl" type="url" placeholder="https://..."/>
+      </div>
+    </div>
+    <div class="modal-error" id="modalError">Please enter an item name.</div>
+    <div class="modal-footer">
+      <button class="modal-btn-cancel" id="modalCancel">Cancel</button>
+      <button class="modal-btn-add" id="modalAdd">Save to list</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -845,10 +1052,42 @@ const CATALOG = [
 const CATS = ['Tech','Beauty','Clothing','Home','Toys','Other'];
 
 // ── STATE ──────────────────────────────────────────────────────────────────
+// ── PERSISTENCE ────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'kuai-v1';
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      items: state.items,
+      selectedId: state.selectedId,
+      filterCat: state.filterCat,
+      favOnly: state.favOnly,
+      showPurchased: state.showPurchased,
+      sortBy: state.sortBy,
+    }));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const s = JSON.parse(raw);
+    if (!Array.isArray(s.items)) return null;
+    return s;
+  } catch(e) { return null; }
+}
+
+const _p = loadState();
 let state = {
-  items:[], selectedId:null, search:'',
-  filterCat:'All', favOnly:false, showPurchased:true,
-  sortBy:'dateAddedNewest', notesEditing:false,
+  items:         _p?.items        ?? [],
+  selectedId:    _p?.selectedId   ?? null,
+  search:        '',
+  filterCat:     _p?.filterCat    ?? 'All',
+  favOnly:       _p?.favOnly      ?? false,
+  showPurchased: _p?.showPurchased ?? true,
+  sortBy:        _p?.sortBy       ?? 'dateAddedNewest',
+  notesEditing:  false,
 };
 let searchTimer = null;
 let catalogResults = [];
@@ -903,11 +1142,13 @@ function addItem(c) {
   document.getElementById('searchInput').value = '';
   document.getElementById('searchClear').classList.remove('show');
   catalogResults = [];
+  saveState();
   toast('"' + item.name + '" saved to your list', 'success');
   render();
 }
 function updateItem(id, updates) {
   state.items = state.items.map(i => i.id === id ? { ...i, ...updates } : i);
+  saveState();
   render();
 }
 function removeItem(id) {
@@ -915,6 +1156,7 @@ function removeItem(id) {
   state.items = state.items.filter(i => i.id !== id);
   if (state.selectedId === id) state.selectedId = state.items[0]?.id || null;
   state.notesEditing = false;
+  saveState();
   toast('"' + name + '" removed');
   render();
 }
@@ -1102,6 +1344,32 @@ function renderController() {
   const filterActive = state.filterCat !== 'All' || state.favOnly || !state.showPurchased;
   document.getElementById('filterActiveDot').classList.toggle('show', filterActive);
   document.getElementById('ctrlCategory').classList.toggle('has-filter', state.filterCat !== 'All');
+
+  // Budget bar
+  renderBudget();
+}
+
+function renderBudget() {
+  const items = state.items.filter(i => !i.purchased);
+  const bought = state.items.filter(i => i.purchased);
+  const hasAny = state.items.length > 0;
+  document.getElementById('budgetBarWrap').classList.toggle('visible', hasAny);
+  if (!hasAny) return;
+
+  const sumOf = arr => arr.reduce((s, i) => s + (lowestPrice(i) || 0), 0);
+  const highVal   = sumOf(items.filter(i => i.priority === 'high'));
+  const medVal    = sumOf(items.filter(i => i.priority === 'medium'));
+  const lowVal    = sumOf(items.filter(i => i.priority === 'low'));
+  const boughtVal = sumOf(bought);
+  const total     = highVal + medVal + lowVal + boughtVal;
+
+  document.getElementById('budgetTotal').textContent = '$' + total.toLocaleString();
+  document.getElementById('budgetBought').textContent = boughtVal > 0 ? '$' + boughtVal.toLocaleString() + ' bought' : '';
+
+  const pct = v => total > 0 ? (v / total * 100).toFixed(1) + '%' : '0%';
+  document.getElementById('budgetSegHigh').style.width   = pct(highVal);
+  document.getElementById('budgetSegMedium').style.width = pct(medVal);
+  document.getElementById('budgetSegLow').style.width    = pct(lowVal);
 }
 
 function renderStats() {
@@ -1215,6 +1483,69 @@ document.getElementById('removeBtn').addEventListener('click', () => {
   const item = selectedItem(); if (!item) return; removeItem(item.id);
 });
 
+// ── CUSTOM ITEM MODAL ─────────────────────────────────────────────────────
+const modalBackdrop = document.getElementById('modalBackdrop');
+
+function openModal() {
+  // Reset fields
+  ['customName','customBrand','customPrice','customUrl'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('customCat').value = 'Clothing';
+  document.getElementById('customPriority').value = 'medium';
+  document.getElementById('modalError').classList.remove('show');
+  modalBackdrop.classList.add('open');
+  setTimeout(() => document.getElementById('customName').focus(), 60);
+}
+function closeModal() { modalBackdrop.classList.remove('open'); }
+
+document.getElementById('addCustomBtn').addEventListener('click', openModal);
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalCancel').addEventListener('click', closeModal);
+modalBackdrop.addEventListener('click', e => { if (e.target === modalBackdrop) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+document.getElementById('modalAdd').addEventListener('click', () => {
+  const name = document.getElementById('customName').value.trim();
+  if (!name) {
+    document.getElementById('modalError').classList.add('show');
+    document.getElementById('customName').focus();
+    return;
+  }
+  document.getElementById('modalError').classList.remove('show');
+
+  const rawPrice = parseFloat(document.getElementById('customPrice').value) || 0;
+  const brand    = document.getElementById('customBrand').value.trim() || 'Custom';
+  const cat      = document.getElementById('customCat').value;
+  const priority = document.getElementById('customPriority').value;
+  const url      = document.getElementById('customUrl').value.trim();
+
+  const customItem = {
+    id: 'item-' + Date.now(),
+    name, brand, category: cat,
+    price: rawPrice,
+    image: 'https://placehold.co/400x300/ECEAE3/9A8878?text=' + encodeURIComponent(name.substring(0,18)),
+    priceComparison: rawPrice > 0 ? [{
+      retailer: url ? (() => { try { return new URL(url).hostname.replace('www.',''); } catch(e) { return 'Custom'; } })() : 'Custom',
+      price: rawPrice
+    }] : [{ retailer: 'Custom', price: 0 }],
+    notes: url ? 'Link: ' + url : '',
+    priority,
+    favorite: false,
+    purchased: false,
+    dateAdded: new Date().toISOString(),
+    isCustom: true,
+  };
+
+  state.items.unshift(customItem);
+  state.selectedId = customItem.id;
+  saveState();
+  closeModal();
+  toast('"' + name + '" added to your list', 'success');
+  render();
+});
+
+// ── THEME ──────────────────────────────────────────────────────────────────
 // Theme
 const html = document.documentElement;
 function syncThemeBtn() {
@@ -1231,6 +1562,20 @@ document.getElementById('themeToggle').addEventListener('click', () => {
 const savedTheme = localStorage.getItem('kuai-theme');
 if (savedTheme) { html.dataset.theme = savedTheme; }
 syncThemeBtn();
+
+// Sync filter UI to persisted state
+if (state.filterCat && state.filterCat !== 'All') {
+  const catEl = document.getElementById('ctrlCategory');
+  if (catEl) catEl.value = state.filterCat;
+}
+document.getElementById('swFav').classList.toggle('on', state.favOnly);
+document.getElementById('ctrlFavToggle').setAttribute('aria-checked', String(state.favOnly));
+document.getElementById('swPurchased').classList.toggle('on', state.showPurchased);
+document.getElementById('ctrlPurchasedToggle').setAttribute('aria-checked', String(state.showPurchased));
+if (state.sortBy) {
+  const sortEl = document.getElementById('ctrlSort');
+  if (sortEl) sortEl.value = state.sortBy;
+}
 
 render();
 
